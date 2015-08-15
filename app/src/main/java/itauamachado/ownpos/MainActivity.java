@@ -17,6 +17,7 @@ import itauamachado.ownpos.LocationAPI.UpdateLocationActivity;
 public class MainActivity extends AppCompatActivity implements
         AdapterView.OnItemClickListener {
 
+
     private ListView listView;
     private String[] activities = {"LastLocationActivity",
             "UpdateLocationActivity",

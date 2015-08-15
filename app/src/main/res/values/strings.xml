@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Ownpos</string>
 
+    <string name="facebook_app_id">1590966094499577</string>
     <string name="title">Example Location API</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_last_location">LastLocationActivity</string>
