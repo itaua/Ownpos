@@ -9,4 +9,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_update_location">UpdateLocationActivity</string>
     <string name="title_activity_address_location">AddressLocationActivity</string>
+
+    <string name="sign_out_button_name">Sign out</string>
+    <string name="revoke_access_button_name">Revoke</string>
 </resources>
