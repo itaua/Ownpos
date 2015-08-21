@@ -6,6 +6,7 @@ import android.content.IntentSender;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +17,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.engine.Resource;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -24,6 +26,7 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.Profile;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -47,13 +50,13 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 
 import org.json.JSONException;
 
 
 public class MainActivity extends AppCompatActivity implements
-        AdapterView.OnItemClickListener,
-        View.OnClickListener,
         ConnectionCallbacks,
         OnConnectionFailedListener {
 
@@ -67,86 +70,98 @@ public class MainActivity extends AppCompatActivity implements
         private ConnectionResult connectionResult;
         private boolean isConsentScreenOpened;
         private boolean isSignInButtonClicked;
-        private Button btSignOut;
-        private Button btRevokeAccess;
-        private SignInButton btSignInDefault;
 
-    // ControleActivity
-        private ListView listView;
-        private String[] activities = {"LastLocationActivity", "UpdateLocationActivity",  "AddressLocationActivity"};
+
+    // MainActivity
         private static final String TAG = "Ownpos_Log";
+        private Toolbar mToolbar;
+        private Toolbar mToolbar_Botton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         //facebook
             FacebookSdk.sdkInitialize(getApplicationContext());
+            mcallbackManager = CallbackManager.Factory.create();
+            LoginManager.getInstance().registerCallback(mcallbackManager,
+                    new FacebookCallback<LoginResult>() {
+                        @Override
+                        public void onSuccess(LoginResult loginResult) {
+                            Log.i(TAG, loginResult.getAccessToken().getUserId());
+                            new GraphRequest(
+                                    loginResult.getAccessToken(),
+                                    loginResult.getAccessToken().getUserId(),
+
+                                    null,
+                                    HttpMethod.GET,
+                                    new GraphRequest.Callback() {
+                                        public void onCompleted(GraphResponse response) {
+
+                                            try {
+                                                String id = response.getJSONObject().getString("id");
+                                                String name = response.getJSONObject().getString("name");
+                                                String profileUrl = response.getJSONObject().getString("link");
+                                                String imageUrl = "http://graph.facebook.com/" + id + "/picture";
+                                                String email = response.getJSONObject().getString("email");
+                                                String msg = id + " - " + name + " - " + profileUrl + " - " + imageUrl + " - " + email;
+
+                                                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                            ).executeAsync();
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            Toast.makeText(MainActivity.this, "Login Cancel", Toast.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void onError(FacebookException exception) {
+                            Toast.makeText(MainActivity.this, exception.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
 
         setContentView(R.layout.activity_main);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, activities);
-        listView = (ListView) findViewById(R.id.listView);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(this);
 
-        // LOGIN FACEBOOK
-        mcallbackManager = CallbackManager.Factory.create();
-        loginButton = (LoginButton) findViewById(R.id.login_button);
-        loginButton.setReadPermissions(Arrays.asList("email", "public_profile", "user_friends"));
-        loginButton.registerCallback(mcallbackManager, new FacebookCallback<LoginResult>() {
+        //viewMainActivity
+        mToolbar = (Toolbar) findViewById(R.id.mToolbar);
+        mToolbar.setTitle(getString(R.string.app_name));
+        mToolbar.setSubtitle("Navegação Indoor");
+        setSupportActionBar(mToolbar);
+
+        mToolbar_Botton = (Toolbar) findViewById(R.id.inc_toolbar_botton);
+        mToolbar_Botton.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
-            public void onSuccess(LoginResult loginResult) {
-                Log.i(TAG, loginResult.getAccessToken().getUserId());
-                new GraphRequest(
-                        loginResult.getAccessToken(),
-                        loginResult.getAccessToken().getUserId(),
-
-                        null,
-                        HttpMethod.GET,
-                        new GraphRequest.Callback() {
-                            public void onCompleted(GraphResponse response) {
-
-                                try {
-                                    String id = response.getJSONObject().getString("id");
-                                    String name = response.getJSONObject().getString("name");
-                                    String profileUrl = response.getJSONObject().getString("link");
-                                    String imageUrl = "http://graph.facebook.com/"+id+"/picture";
-                                    String email = response.getJSONObject().getString("email");
-                                    String msg = id+" - "+name+" - "+profileUrl+" - "+imageUrl+" - "+email;
-
-                                    Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                ).executeAsync();
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-
-            @Override
-            public void onError(FacebookException e) {
-                e.printStackTrace();
+            public boolean onMenuItemClick(MenuItem item) {
+                Toast.makeText(getApplicationContext(), "clicked menu botton", Toast.LENGTH_SHORT).show();
+                return false;
             }
         });
+        mToolbar_Botton.inflateMenu(R.menu.menu_booton);
+        mToolbar_Botton.findViewById(R.id.iv_setting).setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                     Toast.makeText(getApplicationContext(), "clicked settings", Toast.LENGTH_SHORT).show();
+                 }
+             }
+        );
+
+
+
 
         //LOGIN GOOPLE
-        googleApiClient = new GoogleApiClient.Builder(MainActivity.this)
-                .addConnectionCallbacks(MainActivity.this)
-                .addOnConnectionFailedListener(MainActivity.this)
-                .addApi(Plus.API)
-                .addScope(Plus.SCOPE_PLUS_LOGIN)
-                .build();
-        btSignOut = (Button) findViewById(R.id.btSignOut);
-        btSignOut.setOnClickListener(MainActivity.this);
-        btRevokeAccess = (Button) findViewById(R.id.btRevokeAccess);
-        btRevokeAccess.setOnClickListener(MainActivity.this);
-        btSignInDefault = (SignInButton) findViewById(R.id.btSignInDefault);
-        btSignInDefault.setOnClickListener(MainActivity.this);
-
+            googleApiClient = new GoogleApiClient.Builder(MainActivity.this)
+                    .addConnectionCallbacks(MainActivity.this)
+                    .addOnConnectionFailedListener(MainActivity.this)
+                    .addApi(Plus.API)
+                    .addScope(Plus.SCOPE_PLUS_LOGIN)
+                    .build();
 
     }
 
@@ -159,36 +174,53 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if(id == R.id.mMenu_openmapa){
             startActivity(new Intent(this, IndoorService.class));
         }
+        else
+            if(id ==R.id.mMenu_loginGoogle){
+                if(!googleApiClient.isConnecting()){
+                    isSignInButtonClicked = true;
+                    resolveSignIn();
+                }
+            }
+        else
+            if(id ==R.id.mMenu_logoutGoogle){
+                if(googleApiClient.isConnected()){
+                    Plus.AccountApi.clearDefaultAccount(googleApiClient);
+                    googleApiClient.disconnect();
+                    googleApiClient.connect();
+                }
+            }
+        else
+            if(id ==R.id.mMenu_revokeGoogle){
+                if(googleApiClient.isConnected()){
+                    Plus.AccountApi.clearDefaultAccount(googleApiClient);
+                    Plus.AccountApi.revokeAccessAndDisconnect(googleApiClient).setResultCallback(new ResultCallback<Status>(){
+                        @Override
+                        public void onResult(Status result) {
+                            finish();
+                        }
+                    });
+                }
+            }
+        else
+            if(id== R.id.mMenu_loginFacebook){
+                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"));
+            }
+        else
+            if(id==R.id.mMenu_logoutFacebook){
+                LoginManager.getInstance().logOut();
+
+            }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = null;
-
-        switch(position){
-            case 0:
-                intent = new Intent(this, LastLocationActivity.class);
-                break;
-            case 1:
-                intent = new Intent(this, UpdateLocationActivity.class);
-                break;
-            case 2:
-                intent = new Intent(this, AddressLocationActivity.class);
-                break;
-        }
-        startActivity(intent);
     }
 
     //CICLO DE VIDA
     @Override
     public void onResume() {
         super.onResume();
-        message(Profile.getCurrentProfile());
+        Profile.getCurrentProfile();
         Log.i(TAG, "onResume()");
     }
 
@@ -227,11 +259,7 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void message(Profile profile) {
-        if (profile != null) {
-            Log.i(TAG, profile.toString());
-        }
-    }
+
 
 
     // Metodos GooglePlus
@@ -240,14 +268,10 @@ public class MainActivity extends AppCompatActivity implements
         isSignInButtonClicked = false;
         getDataProfile();
     }
-
-
     @Override
     public void onConnectionSuspended(int cause) {
         googleApiClient.connect();
     }
-
-
     @Override
     public void onConnectionFailed(ConnectionResult result) {
         if(!result.hasResolution()){
@@ -263,7 +287,6 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
     }
-
     public void resolveSignIn(){
         if(connectionResult != null && connectionResult.hasResolution()){
             try {
@@ -276,7 +299,6 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
     }
-
     public void getDataProfile(){
         Person p = Plus.PeopleApi.getCurrentPerson(googleApiClient);
 
@@ -294,34 +316,6 @@ public class MainActivity extends AppCompatActivity implements
         }
         else{
             Toast.makeText(MainActivity.this, "Dados não liberados", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        if(v.getId() == R.id.btSignInDefault){
-            if(!googleApiClient.isConnecting()){
-                isSignInButtonClicked = true;
-                resolveSignIn();
-            }
-        }
-        else if(v.getId() == R.id.btSignOut){
-            if(googleApiClient.isConnected()){
-                Plus.AccountApi.clearDefaultAccount(googleApiClient);
-                googleApiClient.disconnect();
-                googleApiClient.connect();
-            }
-        }
-        else if(v.getId() == R.id.btRevokeAccess){
-            if(googleApiClient.isConnected()){
-                Plus.AccountApi.clearDefaultAccount(googleApiClient);
-                Plus.AccountApi.revokeAccessAndDisconnect(googleApiClient).setResultCallback(new ResultCallback<Status>(){
-                    @Override
-                    public void onResult(Status result) {
-                        finish();
-                    }
-                });
-            }
         }
     }
 }

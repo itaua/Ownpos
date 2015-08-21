@@ -14,7 +14,6 @@
     <string name="revoke_access_button_name">Revoke</string>
 
 
-
     <!-- Indoor_map_menu-->
     <string name="action_clear_log">Clear</string>
     <string name="action_toggle_positioning">Start/stop positioning</string>
@@ -22,4 +21,14 @@
 
     <!-- m_Principal-->
     <string name="mMenu_openmapa">Abrir MapaIndoor</string>
+    <string name="mMenu_loginGoogle">login Google</string>
+    <string name="mMenu_logoutGoogle">logout Google</string>
+    <string name="mMenu_revokeGoogle">revoke Google</string>
+
+    <string name="mMenu_loginFacebook">login Facebook</string>
+    <string name="mMenu_logoutFacebook">logout Facebook</string>
+
+    <!-- toolbar mMenuBotton-->
+    <string name="menu_botton_1">shared</string>
+
 </resources>

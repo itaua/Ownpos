@@ -5,22 +5,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <ListView
-        android:id="@+id/listView"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/mToolbar"
+        android:layout_height="?attr/actionBarSize"
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary" />
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="2dp"
-        android:layout_marginRight ="4dp"
-        android:layout_alignParentEnd="true" />
-
+    <!--
     <com.google.android.gms.common.SignInButton
         android:id="@+id/btSignInDefault"
         android:layout_width="wrap_content"
@@ -47,5 +39,21 @@
         android:layout_above="@+id/btSignOut"
         android:layout_alignRight="@+id/login_button"
         android:layout_alignEnd="@+id/login_button" />
+    -->
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight ="4dp"
+        android:layout_alignParentEnd="true" />
+
+    <include
+        android:id="@+id/inc_toolbar_botton"
+        layout="@layout/view_toolbar_botton"/>
 
 </RelativeLayout>

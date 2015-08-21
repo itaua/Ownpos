@@ -1,9 +1,13 @@
 package itauamachado.ownpos.service;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,7 +38,7 @@ import itauamachado.ownpos.R;
  * floor plan from http://developer.indooratlas.com.</p>
  * <p/>
  */
-public class IndoorService extends Activity implements IndoorAtlasListener {
+public class IndoorService extends AppCompatActivity implements IndoorAtlasListener {
 
     private static final String TAG = "MainActivity";
 
@@ -64,6 +68,13 @@ public class IndoorService extends Activity implements IndoorAtlasListener {
 
         initIndoorAtlas();
 
+        //viewMainActivity
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.mToolbar);
+        mToolbar.setTitle(getString(R.string.app_name));
+        mToolbar.setSubtitle("Navegação Indoor");
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 
     @Override
@@ -86,6 +97,9 @@ public class IndoorService extends Activity implements IndoorAtlasListener {
                 return true;
             case R.id.action_toggle_positioning:
                 togglePositioning();
+                return true;
+            case android.R.id.home:
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -249,7 +263,7 @@ public class IndoorService extends Activity implements IndoorAtlasListener {
 
     static class LogAdapter extends BaseAdapter {
 
-        private ArrayList<String> mLines = new ArrayList<String>();
+        private ArrayList<String> mLines = new ArrayList<>();
         private LayoutInflater mInflater;
 
         public LogAdapter(Context context) {

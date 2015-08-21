@@ -4,6 +4,16 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/mToolbar"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_margin="8dp"
+        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
+        android:background="@layout/toolbar_rounded_corners" />
+
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"

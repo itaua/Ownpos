@@ -1,6 +1,6 @@
 package itauamachado.ownpos.domain;
 
-
+//event bus
 public class MessageEB {
     private String resultMessage;
 

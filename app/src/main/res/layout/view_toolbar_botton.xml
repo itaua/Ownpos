@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mToolbar"
+    android:layout_alignParentBottom="true"
+    android:layout_height="?attr/actionBarSize"
+    android:layout_width="match_parent"
+    android:minHeight="?attr/actionBarSize"
+    android:background="?attr/colorPrimary"
+    app:theme="@style/Theme.mBotton">
+
+<ImageView
+    android:layout_width="24dp"
+    android:layout_height="24dp"
+    android:id="@+id/iv_setting"
+    android:src="@drawable/ic_setting_light"/>
+</android.support.v7.widget.Toolbar>
