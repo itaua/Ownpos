@@ -12,4 +12,14 @@
 
     <string name="sign_out_button_name">Sign out</string>
     <string name="revoke_access_button_name">Revoke</string>
+
+
+
+    <!-- Indoor_map_menu-->
+    <string name="action_clear_log">Clear</string>
+    <string name="action_toggle_positioning">Start/stop positioning</string>
+
+
+    <!-- m_Principal-->
+    <string name="mMenu_openmapa">Abrir MapaIndoor</string>
 </resources>

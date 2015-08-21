@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -32,6 +33,7 @@ import java.util.Arrays;
 import itauamachado.ownpos.LocationAPI.AddressLocationActivity;
 import itauamachado.ownpos.LocationAPI.LastLocationActivity;
 import itauamachado.ownpos.LocationAPI.UpdateLocationActivity;
+import itauamachado.ownpos.service.IndoorService;
 
 
 //GooglePlay
@@ -152,6 +154,16 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if(id == R.id.mMenu_openmapa){
+            startActivity(new Intent(this, IndoorService.class));
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
