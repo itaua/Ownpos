@@ -54,19 +54,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LocationAPI.LastLocationActivity"
-            android:label="@string/title_activity_last_location" >
-        </activity>
-        <activity
-            android:name=".LocationAPI.UpdateLocationActivity"
-            android:label="@string/title_activity_update_location" >
-        </activity>
-        <activity
-            android:name=".LocationAPI.AddressLocationActivity"
-            android:label="@string/title_activity_address_location" >
-        </activity>
-        <activity
-            android:name=".service.IndoorService"
+            android:name=".IndoorMap"
             android:label="@string/app_name" >
         </activity>
 

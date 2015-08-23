@@ -14,7 +14,7 @@ import java.util.Locale;
 
 
 import de.greenrobot.event.EventBus;
-import itauamachado.ownpos.LocationAPI.AddressLocationActivity;
+import itauamachado.ownpos.IndoorMap;
 import itauamachado.ownpos.domain.MessageEB;
 
 
@@ -27,9 +27,9 @@ public class LocationIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Location location = intent.getParcelableExtra(AddressLocationActivity.LOCATION);
-        int type = intent.getIntExtra(AddressLocationActivity.TYPE, 1);
-        String address = intent.getStringExtra(AddressLocationActivity.ADDRESS);
+        Location location = intent.getParcelableExtra(IndoorMap.LOCATION);
+        int type = intent.getIntExtra(IndoorMap.TYPE, 1);
+        String address = intent.getStringExtra(IndoorMap.ADDRESS);
 
         List<Address> list = new ArrayList<>();
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
@@ -66,8 +66,7 @@ public class LocationIntentService extends IntentService {
                 }
             }
             else{
-                resultAddress += a.getLatitude()+"\n";
-                resultAddress += a.getLongitude();
+                resultAddress += a.getLatitude()+" " + a.getLongitude();
             }
         }
         else{

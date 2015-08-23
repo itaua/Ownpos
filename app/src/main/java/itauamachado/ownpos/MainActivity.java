@@ -3,21 +3,16 @@ package itauamachado.ownpos;
 import android.content.Intent;
 
 import android.content.IntentSender;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.bumptech.glide.load.engine.Resource;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -31,18 +26,17 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-import itauamachado.ownpos.LocationAPI.AddressLocationActivity;
-import itauamachado.ownpos.LocationAPI.LastLocationActivity;
-import itauamachado.ownpos.LocationAPI.UpdateLocationActivity;
-import itauamachado.ownpos.service.IndoorService;
+import itauamachado.ownpos.fragments.AcervoFragment;
+import itauamachado.ownpos.domain.Acervo;
 
 
 //GooglePlay
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
@@ -50,8 +44,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
-import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 
 import org.json.JSONException;
 
@@ -66,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements
 
     // Login GooglePlus
         private static final int SIGN_IN_CODE = 56465;
-        private GoogleApiClient googleApiClient;
+        private GoogleApiClient mGoogleApiClient;
         private ConnectionResult connectionResult;
         private boolean isConsentScreenOpened;
         private boolean isSignInButtonClicked;
@@ -76,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements
         private static final String TAG = "Ownpos_Log";
         private Toolbar mToolbar;
         private Toolbar mToolbar_Botton;
+
+        private List<Acervo> mAcervoList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +123,14 @@ public class MainActivity extends AppCompatActivity implements
 
         setContentView(R.layout.activity_main);
 
+        //LOGIN GOOPLE
+            mGoogleApiClient = new GoogleApiClient.Builder(MainActivity.this)
+                    .addConnectionCallbacks(MainActivity.this)
+                    .addOnConnectionFailedListener(MainActivity.this)
+                    .addApi(Plus.API)
+                    .addScope(Plus.SCOPE_PLUS_LOGIN)
+                    .build();
+
         //viewMainActivity
         mToolbar = (Toolbar) findViewById(R.id.mToolbar);
         mToolbar.setTitle(getString(R.string.app_name));
@@ -145,24 +147,20 @@ public class MainActivity extends AppCompatActivity implements
         });
         mToolbar_Botton.inflateMenu(R.menu.menu_booton);
         mToolbar_Botton.findViewById(R.id.iv_setting).setOnClickListener(new View.OnClickListener() {
-                 @Override
-                 public void onClick(View v) {
-                     Toast.makeText(getApplicationContext(), "clicked settings", Toast.LENGTH_SHORT).show();
-                 }
-             }
+                                                                             @Override
+                                                                             public void onClick(View v) {
+                                                                                 Toast.makeText(getApplicationContext(), "clicked settings", Toast.LENGTH_SHORT).show();
+                                                                             }
+                                                                         }
         );
 
-
-
-
-        //LOGIN GOOPLE
-            googleApiClient = new GoogleApiClient.Builder(MainActivity.this)
-                    .addConnectionCallbacks(MainActivity.this)
-                    .addOnConnectionFailedListener(MainActivity.this)
-                    .addApi(Plus.API)
-                    .addScope(Plus.SCOPE_PLUS_LOGIN)
-                    .build();
-
+        AcervoFragment acervoFragment = (AcervoFragment) getSupportFragmentManager().findFragmentByTag("fragAcervo");
+        if (acervoFragment == null){
+            acervoFragment = new AcervoFragment();
+            FragmentTransaction ft= getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.rl_fragment_container, acervoFragment, "teste");
+            ft.commit();
+        }
     }
 
     @Override
@@ -174,29 +172,29 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.mMenu_openmapa){
-            startActivity(new Intent(this, IndoorService.class));
+        if(id == R.id.mMenu_indoormapa){
+            startActivity(new Intent(this, IndoorMap.class));
         }
         else
             if(id ==R.id.mMenu_loginGoogle){
-                if(!googleApiClient.isConnecting()){
+                if(!mGoogleApiClient.isConnecting()){
                     isSignInButtonClicked = true;
                     resolveSignIn();
                 }
             }
         else
             if(id ==R.id.mMenu_logoutGoogle){
-                if(googleApiClient.isConnected()){
-                    Plus.AccountApi.clearDefaultAccount(googleApiClient);
-                    googleApiClient.disconnect();
-                    googleApiClient.connect();
+                if(mGoogleApiClient.isConnected()){
+                    Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+                    mGoogleApiClient.disconnect();
+                    mGoogleApiClient.connect();
                 }
             }
         else
             if(id ==R.id.mMenu_revokeGoogle){
-                if(googleApiClient.isConnected()){
-                    Plus.AccountApi.clearDefaultAccount(googleApiClient);
-                    Plus.AccountApi.revokeAccessAndDisconnect(googleApiClient).setResultCallback(new ResultCallback<Status>(){
+                if(mGoogleApiClient.isConnected()){
+                    Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+                    Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient).setResultCallback(new ResultCallback<Status>(){
                         @Override
                         public void onResult(Status result) {
                             finish();
@@ -220,21 +218,24 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onResume() {
         super.onResume();
-        Profile.getCurrentProfile();
         Log.i(TAG, "onResume()");
+        //Facebook
+        Profile.getCurrentProfile();
     }
+
+
 
     @Override
     public void onStart(){
         super.onStart();
-        googleApiClient.connect();
+        mGoogleApiClient.connect();
         Log.i(TAG, "onStart()");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        googleApiClient.disconnect();
+        mGoogleApiClient.disconnect();
         Log.i(TAG, "onStop()");
     }
 
@@ -253,8 +254,8 @@ public class MainActivity extends AppCompatActivity implements
                 isSignInButtonClicked = false;
             }
 
-            if(!googleApiClient.isConnecting()){
-                googleApiClient.connect();
+            if(!mGoogleApiClient.isConnecting()){
+                mGoogleApiClient.connect();
             }
         }
     }
@@ -270,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements
     }
     @Override
     public void onConnectionSuspended(int cause) {
-        googleApiClient.connect();
+        mGoogleApiClient.connect();
     }
     @Override
     public void onConnectionFailed(ConnectionResult result) {
@@ -295,19 +296,19 @@ public class MainActivity extends AppCompatActivity implements
             }
             catch(IntentSender.SendIntentException e) {
                 isConsentScreenOpened = false;
-                googleApiClient.connect();
+                mGoogleApiClient.connect();
             }
         }
     }
     public void getDataProfile(){
-        Person p = Plus.PeopleApi.getCurrentPerson(googleApiClient);
+        Person p = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
 
         if(p != null){
             String id = p.getId();
             String name = p.getDisplayName();
             String profileUrl = p.getUrl();
             String imageUrl = p.getImage().getUrl();
-            String email = Plus.AccountApi.getAccountName(googleApiClient);
+            String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
             imageUrl = imageUrl.substring(0, imageUrl.length() - 2)+"200";
 
             String msg = id+" - "+name+" - "+profileUrl+" - "+imageUrl+" - "+email;
@@ -318,4 +319,28 @@ public class MainActivity extends AppCompatActivity implements
             Toast.makeText(MainActivity.this, "Dados não liberados", Toast.LENGTH_SHORT).show();
         }
     }
+
+
+
+    public List<Acervo> getSetCarList(int qtd){
+        String[] models = new String[]{"BMW 720i", "BMW 720i" };
+        String[] brands = new String[]{"BMW","BMW" };
+        int[] photos = new int[]{ R.mipmap.bmw_720, R.mipmap.bmw_720};
+        List<Acervo> listAux = new ArrayList<>();
+
+        for(int i = 0; i < qtd; i++){
+            Acervo c = new Acervo( models[i % models.length], brands[ i % brands.length ], photos[i % models.length] );
+            listAux.add(c);
+        }
+        return(listAux);
+    }
+
+
+
+
+
+
+
+
+
 }
