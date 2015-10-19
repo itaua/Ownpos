@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/app/src/main/assets" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/mapa_nono_andar.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/mapa_oitavo_andar.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/mapa_quarto_andar.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/mapa_quinto_andar.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/mapa_segundo_andar.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/mapa_setimo_andar.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/mapa_sexto_andar.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/mapa_terceiro_andar.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/assets/mapa_terreo.png" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/itauamachado/ownpos/extras/mapa" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/itauamachado/ownpos/extras/mapa/views/PinView.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/itauamachado/ownpos/service/BReceiver_Context.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/itauamachado/ownpos/service/BReceiver_Location.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/mk_acesso.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/mk_atendimento.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/mk_auditorio.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/mk_aula.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/mk_banheiro.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/mk_biblioteca.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/mk_cantina.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/mk_elevador.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/mk_escada.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/mk_help.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/mk_info.png" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/mk_point.png" charset="windows-1252" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/grey"
+    android:paddingTop="8dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp">
+
+
+    <TextView
+        android:id="@+id/tv_id_evento"
+        android:text="tv_id_evento"
+
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textColor="@color/primary_text"
+        />
+    <TextView
+        android:id="@+id/tv_indoor"
+        android:text="tv_indoor"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textColor="@color/primary_text"
+        />
+    <TextView
+        android:id="@+id/tv_nome"
+        android:text="tv_nome"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textColor="@color/primary_text"
+        />
+    <TextView
+        android:id="@+id/tv_perfil"
+        android:text="tv_perfil"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textColor="@color/primary_text"
+        />
+    <TextView
+        android:id="@+id/tv_titulo"
+        android:text="tv_titulo"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textColor="@color/primary_text"
+        />
+    <TextView
+        android:id="@+id/tv_descricao"
+        android:text="tv_descricao"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textColor="@color/primary_text"
+        />
+    <TextView
+        android:id="@+id/tv_inicio"
+        android:text="tv_inicio"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textColor="@color/primary_text"
+        />
+    <TextView
+        android:id="@+id/tv_fim"
+        android:text="tv_fim"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+    android:textColor="@color/primary_text"
+        />
+    <TextView
+        android:id="@+id/tv_integrantes"
+        android:text="tv_integrantes"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textColor="@color/primary_text"
+        />
+
+    <View
+        android:id="@+id/vw_divider"
+        android:background="@color/divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:layout_below="@+id/tv_integrantes"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+
+</LinearLayout>

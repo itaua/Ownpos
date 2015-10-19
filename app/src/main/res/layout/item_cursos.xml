@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="8dp">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:textColor="@color/primary_text"
+            android:paddingTop="8dp"
+            android:id="@+id/tv_curso_area"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/iv_curso_novo"
+            android:src="@drawable/img_curso_novo"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/iv_curso_aberto"
+            android:layout_toStartOf="@+id/iv_curso_aberto" />
+        <ImageView
+            android:id="@+id/iv_curso_aberto"
+            android:src="@drawable/img_insc_abertas"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/iv_curso_gratuito"
+            android:layout_toStartOf="@+id/iv_curso_gratuito" />
+        <ImageView
+            android:id="@+id/iv_curso_gratuito"
+            android:src="@drawable/img_curso_gratuito"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/iv_curso_psg"
+            android:layout_toStartOf="@+id/iv_curso_psg" />
+        <ImageView
+            android:id="@+id/iv_curso_psg"
+            android:src="@drawable/img_curso_psg"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+    <TextView
+        android:textColor="@color/primary_text"
+        android:paddingTop="8dp"
+        android:id="@+id/tv_curso_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp" />
+
+    <View
+        android:id="@+id/vw_divider"
+        android:layout_marginTop="4dp"
+        android:background="@color/divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp" />
+
+
+
+</LinearLayout>

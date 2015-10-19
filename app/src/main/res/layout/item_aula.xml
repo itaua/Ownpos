@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/grey"
+    android:paddingTop="8dp"
+    android:id="@+id/rl_list_aula">
+
+    <TextView
+        android:id="@+id/tv_id_turma"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:text="1"
+        />
+    <TextView
+        android:id="@+id/tv_indoor"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:text="123"
+        />
+
+
+    <TextView
+        android:id="@+id/tv_dt_aula"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="27/05/2015"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:textSize="16sp"
+        android:textColor="@color/primary_text"
+        android:layout_below="@+id/tv_id_turma"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/tv_hr_inicio"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:textSize="16sp"
+        android:text="horário: 18:00:00"
+        android:textColor="@color/primary_text"
+        android:layout_below="@+id/tv_dt_aula"
+        android:layout_toRightOf="@+id/tv_id_turma"
+        android:layout_toEndOf="@+id/tv_id_turma" />
+    <TextView
+        android:id="@+id/tv_hr_fim"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:paddingTop="8dp"
+        android:textSize="16sp"
+        android:text=" até 22:00:00"
+        android:textColor="@color/primary_text"
+        android:layout_below="@+id/tv_dt_aula"
+        android:layout_toRightOf="@+id/tv_hr_inicio"
+        android:layout_toEndOf="@+id/tv_hr_inicio" />
+
+    <TextView
+        android:id="@+id/tv_sala"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingLeft="8dp"
+        android:paddingBottom="8dp"
+        android:textSize="16sp"
+        android:text="sala de aula do segundo andar"
+        android:textColor="@color/primary_text"
+        android:layout_below="@+id/tv_hr_inicio"
+        android:layout_toRightOf="@+id/tv_id_turma"
+        android:layout_toEndOf="@+id/tv_id_turma" />
+
+    <!-- TextView
+        android:id="@+id/tv_curso"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Graduação em Analise de Sistemas"
+        android:textColor="@color/primary_text"
+        android:layout_below="@+id/tv_dt_aula"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/tv_professor"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="prof padrão"
+        android:textColor="@color/primary_text"
+        android:layout_below="@+id/tv_nome_turma"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/tv_nome_turma"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Nome da Materia"
+        android:textColor="@color/primary_text"
+        android:layout_below="@+id/tv_curso"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" / -->
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/iv_directions"
+        android:background="@mipmap/ic_directions"
+        android:layout_marginRight="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_alignTop="@+id/tv_hr_fim"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <View
+        android:id="@+id/vw_divider"
+        android:background="@color/divider"
+        android:layout_width="match_parent"
+        android:padding="8dp"
+        android:layout_height="0.8dp"
+        android:layout_below="@+id/tv_sala"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>

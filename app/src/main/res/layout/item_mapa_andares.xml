@@ -1,0 +1,140 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="20dp"
+    android:paddingLeft="16dp"
+    android:paddingStart="16dp">
+
+    <TextView
+        android:textColor="@color/primary_text"
+        android:paddingTop="8dp"
+        android:id="@+id/tv_andar"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:paddingRight="16dp"
+        android:textSize="24sp"
+        android:text="6F"/>
+    <TextView
+        android:textColor="@color/primary_text"
+        android:paddingTop="8dp"
+        android:text="Sexto Andar"
+        android:id="@+id/tv_titulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="16dp"
+        android:textSize="24sp"
+        android:layout_alignRight="@+id/vw_divider"
+        android:layout_alignEnd="@+id/vw_divider"
+        android:layout_toRightOf="@+id/tv_andar"
+        android:layout_toEndOf="@+id/tv_andar" />
+
+    <TextView
+        android:textColor="@color/primary_text"
+        android:layout_below="@+id/tv_andar"
+        android:id="@+id/tv_description"
+        android:text="Este andar possui as seguintes facilidades"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:textSize="12sp"
+        />
+
+    <ImageView
+        android:id="@+id/iv_biblioteca"
+        android:src="@drawable/mk_biblioteca"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_below="@+id/tv_description"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="4dp"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/iv_rampa"
+        android:src="@drawable/mk_acesso"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignTop="@+id/iv_biblioteca"
+        android:layout_toRightOf="@+id/iv_biblioteca"
+        android:layout_toEndOf="@+id/iv_biblioteca"
+        android:layout_marginLeft="4dp"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/iv_comida"
+        android:src="@drawable/mk_cantina"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignTop="@+id/iv_rampa"
+        android:layout_toRightOf="@+id/iv_rampa"
+        android:layout_toEndOf="@+id/iv_rampa"
+        android:layout_marginLeft="4dp"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/iv_info"
+        android:src="@drawable/mk_info"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignTop="@+id/iv_comida"
+        android:layout_toRightOf="@+id/iv_comida"
+        android:layout_toEndOf="@+id/iv_comida"
+        android:layout_marginLeft="4dp"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/iv_atendimento"
+        android:src="@drawable/mk_atendimento"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignTop="@+id/iv_info"
+        android:layout_toRightOf="@+id/iv_info"
+        android:layout_toEndOf="@+id/iv_info"
+        android:layout_marginLeft="4dp"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/iv_aula"
+        android:src="@drawable/mk_aula"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_above="@+id/vw_divider"
+        android:layout_toRightOf="@+id/iv_atendimento"
+        android:layout_toEndOf="@+id/iv_atendimento"
+        android:layout_marginLeft="4dp"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/iv_auditorio"
+        android:src="@drawable/mk_auditorio"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignTop="@+id/iv_aula"
+        android:layout_toRightOf="@+id/iv_aula"
+        android:layout_toEndOf="@+id/iv_aula"
+        android:layout_marginLeft="4dp"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:id="@+id/iv_banheiro"
+        android:src="@drawable/mk_banheiro"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_above="@+id/vw_divider"
+        android:layout_toRightOf="@+id/iv_auditorio"
+        android:layout_toEndOf="@+id/iv_auditorio"
+        android:layout_marginLeft="4dp"
+        android:visibility="invisible"/>
+
+    <View
+        android:id="@+id/vw_divider"
+        android:background="@color/divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:layout_below="@+id/iv_atendimento"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="4dp" />
+</RelativeLayout>

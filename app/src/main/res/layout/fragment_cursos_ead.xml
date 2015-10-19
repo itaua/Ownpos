@@ -1,0 +1,33 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="itauamachado.ownpos.fragments.CursosEadFragment">
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srl_swipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.diegocarloslima.fgelv.lib.FloatingGroupExpandableListView
+                android:id="@+id/sample_activity_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:cacheColorHint="@android:color/transparent"
+                android:childDivider="@color/divider"
+                android:divider="@color/divider"
+                android:dividerHeight="1dp"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <ProgressBar
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:id="@+id/pb_load"
+        android:layout_width="40dp"
+        android:layout_height="40dp" />
+
+</FrameLayout>
