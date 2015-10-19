@@ -1,34 +1,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
 
-    <item android:id="@+id/mMenu_indoormapa"
-        android:title="@string/mMenu_openmapa"
+    <item
+        android:id="@+id/action_mapa"
         android:orderInCategory="100"
+        android:title="Mapa Indoor"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/limparLogin"
+        android:orderInCategory="100"
+        android:title="@string/limparLogin"
         app:showAsAction="never" />
 
-    <item android:id="@+id/mMenu_loginGoogle"
-        android:title="@string/mMenu_loginGoogle"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
-
-    <item android:id="@+id/mMenu_logoutGoogle"
-        android:title="@string/mMenu_logoutGoogle"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
-
-    <item android:id="@+id/mMenu_revokeGoogle"
-        android:title="@string/mMenu_revokeGoogle"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
-
-
-    <item android:id="@+id/mMenu_loginFacebook"
-        android:title="@string/mMenu_loginFacebook"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
-    <item android:id="@+id/mMenu_logoutFacebook"
-        android:title="@string/mMenu_logoutFacebook"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
 </menu>

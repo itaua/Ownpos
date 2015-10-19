@@ -1,0 +1,63 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="20dp"
+    android:paddingLeft="16dp"
+    android:paddingStart="16dp">
+
+    <ImageView
+        android:id="@+id/iv_tipo"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"/>
+    <TextView
+        android:textColor="@color/primary_text"
+        android:paddingTop="8dp"
+        android:id="@+id/tv_titulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="16dp"
+        android:textSize="24sp"
+        android:text="Atendimento"
+        android:layout_alignTop="@+id/iv_tipo"
+        android:layout_toRightOf="@+id/iv_tipo"
+        android:layout_toEndOf="@+id/iv_tipo" />
+    <TextView
+        android:textColor="@color/secondary_text"
+        android:paddingTop="8dp"
+        android:text="Atendimento ao publico"
+        android:id="@+id/tv_resumo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="16dp"
+        android:textSize="16sp"
+        android:layout_below="@+id/tv_titulo"
+        android:layout_alignLeft="@+id/iv_biblioteca"
+        android:layout_alignStart="@+id/iv_biblioteca" />
+
+
+    <ImageView
+        android:id="@+id/iv_context_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp"
+        android:src="@mipmap/ic_dots_vertical"
+        android:layout_above="@+id/vw_divider"
+        android:layout_alignRight="@+id/vw_divider"
+        android:layout_alignEnd="@+id/vw_divider" />
+
+    <View
+        android:id="@+id/vw_divider"
+        android:background="@color/divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:layout_below="@+id/tv_resumo"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+</RelativeLayout>

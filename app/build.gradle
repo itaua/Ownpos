@@ -1,15 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
-
+    compileSdkVersion 23
+    buildToolsVersion '21.1.2'
     defaultConfig {
         applicationId "itauamachado.ownpos"
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
+
     }
     buildTypes {
         release {
@@ -17,20 +18,57 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+    }
 }
-repositories {
-    mavenCentral()
-}
+
 dependencies {
+    //possibilita o uso de mais de 65k metodos.
+    compile 'com.android.support:multidex:1.0.0'
+    //parse para gcm
+    //compile 'com.parse.bolts:bolts-android:1.+'
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    //bibliotecas google
     compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.google.android.gms:play-services:7.5.0'
-    compile 'de.greenrobot:eventbus:2.4.0'
-    compile 'com.facebook.android:facebook-android-sdk:4.1.0'
-    compile 'com.github.bumptech.glide:glide:3.6.1'
-    compile('com.mikepenz:materialdrawer:3.1.2@aar') {
+    compile 'com.android.support:cardview-v7:22.2.0'
+    compile 'com.android.support:recyclerview-v7:22.2.0'
+    compile 'com.android.support:design:22.2.1'
+    compile 'com.google.android.gms:play-services:7.5.+'
+    //utilizado nas transitions
+    compile 'com.nineoldandroids:library:2.4.0'
+    //Swipe Layout... nas Activitys de detalhes
+    compile 'com.daimajia.easing:library:1.0.1@aar'
+    compile 'com.daimajia.androidanimations:library:1.1.3@aar'
+    //drawer
+    compile('com.mikepenz.materialdrawer:library:2.8.2@aar') {
         transitive = true
     }
-    compile 'com.android.support:recyclerview-v7:22.2.1'
-    compile files('build/indooratlas-android-sdk-1.4.2-132-beta.jar')
+    //Volley para conectar
+    compile 'com.mcxiaoke.volley:library:1.0.17'
+    //objeto gson
+    compile 'com.google.code.gson:gson:2.3.1'
+    //sdk pra login facebook
+    compile 'com.facebook.android:facebook-android-sdk:4.1.0'
+    //material dialoge..
+    compile 'me.drakeet.materialdialog:library:1.2.2'
+    //load de imagem do facebook
+    compile 'com.facebook.fresco:fresco:0.7.0'
+    //expansivel listView
+    compile 'com.diegocarloslima:fgelv:0.1.+@aar'
+    //envio de mensagens entre activitis por broadcast
+    compile 'de.greenrobot:eventbus:2.4.0'
+    //mapa
+    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.2.0'
+    //slidePainel (usado no mapa)
+    compile 'com.sothree.slidinguppanel:library:3.1.1'
+    //jbscheduler
+    compile 'me.tatarka.support:jobscheduler:0.1.1'
+    //load imagens
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    //float Label text
+    compile 'com.iangclifton.android:floatlabel:1.0.4'
+    //floatactionButton
+    compile 'com.github.clans:fab:1.6.1'
+    compile files('libs/indooratlas-android-sdk-1.4.2-132-beta.jar')
 }
+

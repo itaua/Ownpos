@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp"
+    android:orientation="horizontal"
+    android:background="@drawable/shape_radius">
+
+    <ImageView
+        android:id="@+id/sample_activity_list_group_item_image"
+        android:layout_width="24dp"
+        android:layout_height="40dp"
+        android:paddingLeft="16dp"
+        android:layout_gravity="center_vertical"
+        android:background="@color/accent" />
+
+    <RelativeLayout
+        android:id="@+id/rl_list_cursos"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:background="@color/accent"
+
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/sample_activity_list_group_item_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/primary_text"
+            android:textSize="24sp" />
+    </RelativeLayout>
+
+</LinearLayout>

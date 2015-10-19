@@ -7,18 +7,14 @@ import android.location.Geocoder;
 import android.location.Location;
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-
-import de.greenrobot.event.EventBus;
-import itauamachado.ownpos.IndoorMap;
-import itauamachado.ownpos.domain.MessageEB;
+import itauamachado.ownpos.extras.Util;
 
 
-public class LocationIntentService extends IntentService {
+public class LocationIntentService extends IntentService{
 
 
     public LocationIntentService() {
@@ -27,28 +23,22 @@ public class LocationIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Location location = intent.getParcelableExtra(IndoorMap.LOCATION);
-        int type = intent.getIntExtra(IndoorMap.TYPE, 1);
-        String address = intent.getStringExtra(IndoorMap.ADDRESS);
-
+        Location location = intent.getParcelableExtra(Util.LOCATION);
         List<Address> list = new ArrayList<>();
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         String error = "";
         String resultAddress = "";
 
-
         try {
-            if(type == 2 || address == null) {
+            //if(type == 2 || address == null) {
                 list = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-            }
-            else{
-                list = geocoder.getFromLocationName(address, 1);
-            }
+            //}else{ list = geocoder.getFromLocationName(address, 1); }
         }
         catch (IOException e) {
             e.printStackTrace();
             error = "Network problem";
         }
+
         catch (IllegalArgumentException e){
             e.printStackTrace();
             error = "Illegal arguments";
@@ -59,24 +49,21 @@ public class LocationIntentService extends IntentService {
             Address a = list.get(0);
 
 
-            if(type == 2 || address == null){
+            //if(type == 2 || address == null){
                 for(int i = 0, tam = a.getMaxAddressLineIndex(); i < tam; i++){
                     resultAddress += a.getAddressLine(i);
                     resultAddress += i < tam - 1 ? ", " : "";
                 }
-            }
-            else{
-                resultAddress += a.getLatitude()+" " + a.getLongitude();
-            }
-        }
-        else{
+            //} else{resultAddress += a.getLatitude()+" " + a.getLongitude();}
+        } else{
             resultAddress = error;
         }
 
-
-        MessageEB m = new MessageEB();
-        m.setResultMessage(resultAddress);
-
-        EventBus.getDefault().post(m);
+        //MessageEB m = new MessageEB();
+        //m.setClassName(null);
+        //m.setResultMessage(resultAddress);
+        //EventBus.getDefault().post(m);
     }
+
+
 }

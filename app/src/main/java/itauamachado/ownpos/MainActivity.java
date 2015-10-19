@@ -1,167 +1,163 @@
 package itauamachado.ownpos;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
-
-import android.content.IntentSender;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.PointF;
+import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
-import com.facebook.Profile;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 
+import com.github.clans.fab.FloatingActionMenu;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
-import itauamachado.ownpos.fragments.AcervoFragment;
-import itauamachado.ownpos.domain.Acervo;
+import de.greenrobot.event.EventBus;
+import itauamachado.ownpos.adapters.TabsMainAdapter;
+import itauamachado.ownpos.domain.NavigationWiFi;
+import itauamachado.ownpos.domain.SQLiteConn;
+import itauamachado.ownpos.domain.MessageEB;
+import itauamachado.ownpos.domain.objUsuario;
+import itauamachado.ownpos.extras.SlidingTabLayout;
+import itauamachado.ownpos.extras.Util;
+import itauamachado.ownpos.service.JobSchedulerService;
+import itauamachado.ownpos.service.LocationIntentService;
+import me.tatarka.support.job.JobInfo;
+import me.tatarka.support.job.JobScheduler;
 
 
-//GooglePlay
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.model.people.Person;
-
-import org.json.JSONException;
+public class MainActivity extends AppCompatActivity {
 
 
-public class MainActivity extends AppCompatActivity implements
-        ConnectionCallbacks,
-        OnConnectionFailedListener {
+    private Toolbar mToolbar;
 
-    // Login facebook
-        private CallbackManager mcallbackManager;
-        private LoginButton loginButton;
+    private Drawer.Result navigationDrawerLeft;
+    private AccountHeader.Result headerNavigationLeft;
+    private int mItemDrawerSelected;
+    private int mProfileDrawerSelected;
 
-    // Login GooglePlus
-        private static final int SIGN_IN_CODE = 56465;
-        private GoogleApiClient mGoogleApiClient;
-        private ConnectionResult connectionResult;
-        private boolean isConsentScreenOpened;
-        private boolean isSignInButtonClicked;
+    private List<PrimaryDrawerItem> mListItemDrawerLeft;
+    private objUsuario mUsuario;
+    private SlidingTabLayout mSlidingTabLayout;
+    private ViewPager mViewPager;
 
+    private FloatingActionMenu fab_menu;
 
-    // MainActivity
-        private static final String TAG = "Ownpos_Log";
-        private Toolbar mToolbar;
-        private Toolbar mToolbar_Botton;
-
-        private List<Acervo> mAcervoList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // TRANSITIONS
+            if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ){
+                TransitionInflater inflater = TransitionInflater.from(this);
+                Transition transition = inflater.inflateTransition( R.transition.transitions );
+                getWindow().setSharedElementExitTransition( transition );
+            }
         super.onCreate(savedInstanceState);
 
 
-        //facebook
-            FacebookSdk.sdkInitialize(getApplicationContext());
-            mcallbackManager = CallbackManager.Factory.create();
-            LoginManager.getInstance().registerCallback(mcallbackManager,
-                    new FacebookCallback<LoginResult>() {
-                        @Override
-                        public void onSuccess(LoginResult loginResult) {
-                            Log.i(TAG, loginResult.getAccessToken().getUserId());
-                            new GraphRequest(
-                                    loginResult.getAccessToken(),
-                                    loginResult.getAccessToken().getUserId(),
+        DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
 
-                                    null,
-                                    HttpMethod.GET,
-                                    new GraphRequest.Callback() {
-                                        public void onCompleted(GraphResponse response) {
-
-                                            try {
-                                                String id = response.getJSONObject().getString("id");
-                                                String name = response.getJSONObject().getString("name");
-                                                String profileUrl = response.getJSONObject().getString("link");
-                                                String imageUrl = "http://graph.facebook.com/" + id + "/picture";
-                                                String email = response.getJSONObject().getString("email");
-                                                String msg = id + " - " + name + " - " + profileUrl + " - " + imageUrl + " - " + email;
-
-                                                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    }
-                            ).executeAsync();
-                        }
-
-                        @Override
-                        public void onCancel() {
-                            Toast.makeText(MainActivity.this, "Login Cancel", Toast.LENGTH_LONG).show();
-                        }
-
-                        @Override
-                        public void onError(FacebookException exception) {
-                            Toast.makeText(MainActivity.this, exception.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    });
-
-        setContentView(R.layout.activity_main);
-
-        //LOGIN GOOPLE
-            mGoogleApiClient = new GoogleApiClient.Builder(MainActivity.this)
-                    .addConnectionCallbacks(MainActivity.this)
-                    .addOnConnectionFailedListener(MainActivity.this)
-                    .addApi(Plus.API)
-                    .addScope(Plus.SCOPE_PLUS_LOGIN)
-                    .build();
-
-        //viewMainActivity
-        mToolbar = (Toolbar) findViewById(R.id.mToolbar);
-        mToolbar.setTitle(getString(R.string.app_name));
-        mToolbar.setSubtitle("Navegação Indoor");
-        setSupportActionBar(mToolbar);
-
-        mToolbar_Botton = (Toolbar) findViewById(R.id.inc_toolbar_botton);
-        mToolbar_Botton.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                Toast.makeText(getApplicationContext(), "clicked menu botton", Toast.LENGTH_SHORT).show();
-                return false;
+            public void set(ImageView imageView, Uri uri, Drawable drawable) {
+                Picasso.with(imageView.getContext()).load(uri).placeholder(drawable).into(imageView);
+            }
+
+            @Override
+            public void cancel(ImageView imageView) {
+                Picasso.with(imageView.getContext()).cancelRequest(imageView);
+            }
+
+            @Override
+            public Drawable placeholder(Context context) {
+                return null;
             }
         });
-        mToolbar_Botton.inflateMenu(R.menu.menu_booton);
-        mToolbar_Botton.findViewById(R.id.iv_setting).setOnClickListener(new View.OnClickListener() {
-                                                                             @Override
-                                                                             public void onClick(View v) {
-                                                                                 Toast.makeText(getApplicationContext(), "clicked settings", Toast.LENGTH_SHORT).show();
-                                                                             }
-                                                                         }
-        );
 
-        AcervoFragment acervoFragment = (AcervoFragment) getSupportFragmentManager().findFragmentByTag("fragAcervo");
-        if (acervoFragment == null){
-            acervoFragment = new AcervoFragment();
-            FragmentTransaction ft= getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.rl_fragment_container, acervoFragment, "teste");
-            ft.commit();
+
+
+        setContentView(R.layout.activity_main);
+        mUsuario = new SQLiteConn(this).getUserLogged();
+
+        if(savedInstanceState != null){
+            mItemDrawerSelected = savedInstanceState.getInt("mItemDrawerSelected", 0);
+            mProfileDrawerSelected = savedInstanceState.getInt("mProfileDrawerSelected", 0);
         }
+
+        // TOOLBAR
+            mToolbar = (Toolbar) findViewById(R.id.tb_main);
+            mToolbar.setTitle(R.string.app_name);
+            setSupportActionBar(mToolbar);
+
+        montaTab(); //tem que ser antes do drawer, pois o drawer usa itens das tabs.
+        montaDrawer(savedInstanceState);
+
+        EventBus.getDefault().register(this);
+
+        setFloatingActionMenu();
+
+
+        AlarmeLocation();
+        AlarmeContext();
+
+
+        //List<NavigationWiFi> resultados = new SQLiteConn(this).getNavigationWiFi();
+        //for (int i = 0; i < resultados.size(); i++){
+        //    Log.d("LOG3", resultados.get(i).toString());
+        //}
+/**
+        ContentValues cv = new SQLiteConn(this).getLastGeoPosition();
+        if(cv!=null){
+            Util.log("latitude"+cv.get("latitude"));
+            Util.log("longitude"+cv.get("longitude"));
+            Util.log("verificado"+cv.get("verificado"));
+            Util.log("accuracy"+cv.get("accuracy"));
+        }
+**/
+
     }
+
+    public void setFloatingActionMenu(){
+        fab_menu = (FloatingActionMenu) findViewById(R.id.fab_menu_contexto);
+        fab_menu.hideMenu(false);
+        fab_menu = (FloatingActionMenu) findViewById(R.id.fab_menu_biblioteca);
+        fab_menu.hideMenu(false);
+        fab_menu = (FloatingActionMenu) findViewById(R.id.fab_menu_tarefas);
+        fab_menu.hideMenu(false);
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -172,175 +168,356 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.mMenu_indoormapa){
-            startActivity(new Intent(this, IndoorMap.class));
-        }
-        else
-            if(id ==R.id.mMenu_loginGoogle){
-                if(!mGoogleApiClient.isConnecting()){
-                    isSignInButtonClicked = true;
-                    resolveSignIn();
-                }
-            }
-        else
-            if(id ==R.id.mMenu_logoutGoogle){
-                if(mGoogleApiClient.isConnected()){
-                    Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-                    mGoogleApiClient.disconnect();
-                    mGoogleApiClient.connect();
-                }
-            }
-        else
-            if(id ==R.id.mMenu_revokeGoogle){
-                if(mGoogleApiClient.isConnected()){
-                    Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-                    Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient).setResultCallback(new ResultCallback<Status>(){
-                        @Override
-                        public void onResult(Status result) {
-                            finish();
-                        }
-                    });
-                }
-            }
-        else
-            if(id== R.id.mMenu_loginFacebook){
-                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "user_friends"));
-            }
-        else
-            if(id==R.id.mMenu_logoutFacebook){
-                LoginManager.getInstance().logOut();
 
-            }
+        if(id == R.id.action_mapa){
+            startActivity(new Intent(this, MapaActivity.class));
+        }else if(id == R.id.limparLogin){
+            new SQLiteConn(this).delUserLogged();
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+            super.onBackPressed();
+        }
         return super.onOptionsItemSelected(item);
     }
 
-    //CICLO DE VIDA
     @Override
-    public void onResume() {
-        super.onResume();
-        Log.i(TAG, "onResume()");
-        //Facebook
-        Profile.getCurrentProfile();
-    }
-
-
-
-    @Override
-    public void onStart(){
-        super.onStart();
-        mGoogleApiClient.connect();
-        Log.i(TAG, "onStart()");
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt("mItemDrawerSelected", mItemDrawerSelected);
+        outState.putInt("mProfileDrawerSelected", mProfileDrawerSelected);
+        outState = navigationDrawerLeft.saveInstanceState(outState);
+        outState = headerNavigationLeft.saveInstanceState(outState);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        mGoogleApiClient.disconnect();
-        Log.i(TAG, "onStop()");
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(TAG, "onActivityResult()");
-        //FACEBOOK
-        mcallbackManager.onActivityResult(requestCode, resultCode, data);
-
-        //GOOGLEPLAY
-        if(requestCode == SIGN_IN_CODE){
-            isConsentScreenOpened = false;
-
-            if(resultCode != RESULT_OK){
-                isSignInButtonClicked = false;
-            }
-
-            if(!mGoogleApiClient.isConnecting()){
-                mGoogleApiClient.connect();
-            }
-        }
-    }
-
-
-
-
-    // Metodos GooglePlus
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        isSignInButtonClicked = false;
-        getDataProfile();
-    }
-    @Override
-    public void onConnectionSuspended(int cause) {
-        mGoogleApiClient.connect();
-    }
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        if(!result.hasResolution()){
-            GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(), MainActivity.this, 0).show();
-            return;
+    public void onBackPressed() {
+        if(navigationDrawerLeft.isDrawerOpen()){
+            navigationDrawerLeft.closeDrawer();
         }
 
-        if(!isConsentScreenOpened){
-            connectionResult = result;
-
-            if(isSignInButtonClicked){
-                resolveSignIn();
-            }
-        }
-    }
-    public void resolveSignIn(){
-        if(connectionResult != null && connectionResult.hasResolution()){
-            try {
-                isConsentScreenOpened = true;
-                connectionResult.startResolutionForResult(MainActivity.this, SIGN_IN_CODE);
-            }
-            catch(IntentSender.SendIntentException e) {
-                isConsentScreenOpened = false;
-                mGoogleApiClient.connect();
-            }
-        }
-    }
-    public void getDataProfile(){
-        Person p = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-
-        if(p != null){
-            String id = p.getId();
-            String name = p.getDisplayName();
-            String profileUrl = p.getUrl();
-            String imageUrl = p.getImage().getUrl();
-            String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
-            imageUrl = imageUrl.substring(0, imageUrl.length() - 2)+"200";
-
-            String msg = id+" - "+name+" - "+profileUrl+" - "+imageUrl+" - "+email;
-            Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
-
-        }
+        //colocar as opções de backPressed antes deste if
         else{
-            Toast.makeText(MainActivity.this, "Dados não liberados", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("EXIT", true);
+            startActivity(intent);
+            super.onBackPressed();
         }
     }
 
+    // ItensMenuPrincipal
+    private List<PrimaryDrawerItem> getSetItemDrawerLeft(){
 
+        String[] names = null;
+        int[] icons = null;
+        int[] iconsSelected = null;
 
-    public List<Acervo> getSetCarList(int qtd){
-        String[] models = new String[]{"BMW 720i", "BMW 720i" };
-        String[] brands = new String[]{"BMW","BMW" };
-        int[] photos = new int[]{ R.mipmap.bmw_720, R.mipmap.bmw_720};
-        List<Acervo> listAux = new ArrayList<>();
-
-        for(int i = 0; i < qtd; i++){
-            Acervo c = new Acervo( models[i % models.length], brands[ i % brands.length ], photos[i % models.length] );
-            listAux.add(c);
+        if(mUsuario.getPerfil().equalsIgnoreCase(Util.PERFIL_VISITANTE)){
+            names = Util.TITULOS_DRAWER_ANONIMO;
+            icons = Util.ICONES_ANONIMO;
+            iconsSelected = Util.ICONES_ANONIMO;
+        }else{
+            names = Util.TITULO_DRAWER;
+            icons = Util.ICONES;
+            iconsSelected = Util.ICONES;
         }
-        return(listAux);
+
+        List<PrimaryDrawerItem> list = new ArrayList<>();
+        list = new ArrayList<>();
+        for(int i = 0; i < names.length; i++){
+            PrimaryDrawerItem aux = new PrimaryDrawerItem();
+            aux.setName(names[i]);
+            aux.setIcon(getResources().getDrawable(icons[i]));
+            aux.setTextColor(getResources().getColor(R.color.primary_text));
+            aux.setSelectedIcon(getResources().getDrawable(iconsSelected[i]));
+            aux.setSelectedTextColor(getResources().getColor(R.color.primary));
+            list.add( aux );
+        }
+
+        return(list);
+    }
+
+    protected void montaTab(){
+        mViewPager = (ViewPager) findViewById(R.id.vp_tabs);
+
+
+
+        mViewPager.setAdapter(new TabsMainAdapter(getSupportFragmentManager(), this, mUsuario.getPerfil()));
+
+        mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.stl_tabs);
+        mSlidingTabLayout.setBackgroundColor(getResources().getColor(R.color.primary));
+        mSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
+        mSlidingTabLayout.setHorizontalFadingEdgeEnabled(true); //coloca faiding na tab que esta saindo da visão da tab
+        mSlidingTabLayout.setCustomTabView(R.layout.tab_view, R.id.tv_tab);
+        mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                navigationDrawerLeft.setSelection(position);
+
+                if (mUsuario.getPerfil().equalsIgnoreCase(Util.PERFIL_VISITANTE)) {
+                    Util.log(Util.TITULOS_TAB_ANONIMO[position]);
+                    showFloatActionButton(Util.TITULOS_TAB_ANONIMO[position]);
+                } else {
+                    Util.log(Util.TITULO_TAB[position]);
+                    showFloatActionButton(Util.TITULO_TAB[position]);
+                }
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                Util.log("onPageScrollStateChanged: " + state);
+            }
+        });
+        mSlidingTabLayout.setViewPager(mViewPager);
+    }
+
+    public void showFloatActionButton(String tabName){
+
+        if(fab_menu.isOpened())
+            fab_menu.close(true);
+
+        fab_menu.hideMenu(true);
+
+        int delay = 400;
+
+        if(tabName == "MENU"){
+            fab_menu = (FloatingActionMenu) findViewById(R.id.fab_menu_contexto);
+            fab_menu.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_from_down));
+            fab_menu.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_to_down));
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    fab_menu.showMenu(true);
+                }
+            }, delay);
+
+        }else
+        if(tabName == "BIBLIOTECA"){
+            fab_menu = (FloatingActionMenu) findViewById(R.id.fab_menu_biblioteca);
+            fab_menu.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_from_down));
+            fab_menu.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_to_down));
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    fab_menu.showMenu(true);
+                }
+            }, delay);
+        }else
+        if(tabName=="NOTICIAS"){
+
+        }else
+        if(tabName=="CURSOS") {
+
+        }else
+        if(tabName=="CURSOS EAD") {
+
+        }else
+        if(tabName=="TAREFAS"){
+            fab_menu = (FloatingActionMenu) findViewById(R.id.fab_menu_tarefas);
+            fab_menu.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_from_down));
+            fab_menu.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_to_down));
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    fab_menu.showMenu(true);
+                }
+            }, delay);
+
+        }else
+        if(tabName=="TURMAS"){
+
+        }else
+        if(tabName=="AGENDA"){
+
+        }
+    }
+
+    protected void montaDrawer(Bundle savedInstanceState){
+
+
+        // NAVIGATION DRAWER
+        // HEADER
+
+        if(mUsuario.getUrlPhoto().trim().length() == 0){
+
+            headerNavigationLeft = new AccountHeader()
+                    .withActivity(this)
+                    .withCompactStyle(false)
+                    .withSavedInstance(savedInstanceState)
+                    .withThreeSmallProfileImages(true)
+                    .addProfiles(new ProfileDrawerItem()
+                                    .withName(mUsuario.getPerfil() + ": " + mUsuario.getNome())
+                                    .withEmail(mUsuario.getStatus())
+                                    .withIcon(getResources().getDrawable(R.mipmap.ic_emoticon))
+                    )
+                    .withHeaderBackground(R.color.primary)
+                    .build();
+        }else{
+            headerNavigationLeft = new AccountHeader()
+                    .withActivity(this)
+                    .withCompactStyle(false)
+                    .withSavedInstance(savedInstanceState)
+                    .withThreeSmallProfileImages(true)
+                    .addProfiles(new ProfileDrawerItem()
+                                    .withName(mUsuario.getPerfil() + ": " + mUsuario.getNome())
+                                    .withEmail(mUsuario.getEmail() + "\n" + mUsuario.getStatus())
+                                    .withIcon(mUsuario.getUrlPhoto())
+                    )
+                    .withHeaderBackground(R.color.primary)
+                    .build();
+        }
+
+
+       //Util.log("URL PHOTO LOGIN: " + mUsuario.getUrlPhoto());
+
+        // BODY
+        navigationDrawerLeft = new Drawer()
+                .withActivity(this)
+                .withToolbar(mToolbar)
+                .withDisplayBelowToolbar(false)
+                .withActionBarDrawerToggleAnimated(true)
+                .withDrawerGravity(Gravity.START)
+                .withSavedInstance(savedInstanceState)
+                .withActionBarDrawerToggle(true)
+                .withAccountHeader(headerNavigationLeft)
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
+                        mViewPager.setCurrentItem(i);
+                        mToolbar.setSubtitle(((PrimaryDrawerItem) iDrawerItem).getName());
+                    }
+                })
+                .withOnDrawerItemLongClickListener(new Drawer.OnDrawerItemLongClickListener() {
+                    @Override
+                    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
+                        Toast.makeText(MainActivity.this, "onItemLongClick: " + i, Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                })
+                .build();
+
+        mListItemDrawerLeft = getSetItemDrawerLeft();
+
+        if(mListItemDrawerLeft != null && mListItemDrawerLeft.size() > 0){
+            for( int i = 0; i < mListItemDrawerLeft.size(); i++ ){
+                navigationDrawerLeft.addItem(mListItemDrawerLeft.get(i));
+            }
+            navigationDrawerLeft.setSelection(mItemDrawerSelected);
+        }
+
+        /**
+        navigationDrawerLeft.addItem(new SectionDrawerItem().withName("Sobre"));
+        navigationDrawerLeft.addItem(new DividerDrawerItem());
+        navigationDrawerLeft.addItem(new PrimaryDrawerItem().withName("Projeto").withIcon(R.mipmap.ic_map_marker_radius));
+        navigationDrawerLeft.addItem(new PrimaryDrawerItem().withName("Desevolvedor").withIcon(R.mipmap.ic_emoticon));
+         **/
+    }
+
+    public void onEvent(final MessageEB m){
+        if(m.getmTag().equalsIgnoreCase(MessageEB.TAG_LOCATION)){
+            Util.log("Distancia: "+m.getDistancia());
+
+        }else
+            if(m.getmTag().equalsIgnoreCase(MessageEB.TAG_WIFI_INFO)){
+                Util.log("Estou no senac: "+ m.isNoSENAC());
+            }
+
     }
 
 
+    //JOBSCHEDULER
+    /**
+        public void onJobExecuteLocation(){
+            ComponentName cp = new ComponentName(this, JobSchedulerService.class);
+            JobInfo jb = new JobInfo.Builder (Util.JOB_LOCATION_CODE, cp)
+                    .setBackoffCriteria(5000, JobInfo.BACKOFF_POLICY_LINEAR)
+                            //.setExtras(b)
+                    .setPersisted(true)
+                    .setPeriodic(2000)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setRequiresCharging(false)
+                    .setRequiresDeviceIdle(false)
+                    .build();
+            JobScheduler js = JobScheduler.getInstance(this);
+            js.schedule(jb);
+        }
+
+        public void onJobExecuteContext(){
+            ComponentName cp = new ComponentName(this, JobSchedulerService.class);
+            JobInfo jb = new JobInfo.Builder (Util.JOB_CONTEXT_CODE, cp)
+                    .setBackoffCriteria(5000, JobInfo.BACKOFF_POLICY_LINEAR)
+                            //.setExtras(b)
+                    .setPersisted(true)
+                    .setPeriodic(2000)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setRequiresCharging(false)
+                    .setRequiresDeviceIdle(false)
+                    .build();
+            JobScheduler js = JobScheduler.getInstance(this);
+            js.schedule(jb);
+        }
 
 
+    public void onCancel(int id){
+        JobScheduler js = JobScheduler.getInstance(this);
+        js.cancel(id);
+    }
 
+    public void callIntentService(){
+        Intent it = new Intent(this, LocationIntentService.class);
+        it.putExtra(Util.LOCATION, mLastLocation);
+        startService(it);
+    }
+    **/
 
+    //ALARME
+    public void AlarmeLocation(){
 
+        //boolean alarmeAtivo = (PendingIntent.getBroadcast(this, 0, new Intent("ALARME_DISPARADO"), PendingIntent.FLAG_NO_CREATE) == null);
 
+        //if(alarmeAtivo){
+        //    Log.i("Script", "Novo alarme");
+
+            Intent intent = new Intent("ALARME_LOCATION");
+            PendingIntent p = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(System.currentTimeMillis());
+            c.add(Calendar.SECOND, 3);
+
+            AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarme.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), (60*1000*5), p);
+        //}
+        //else{
+        //    Log.i("Script", "Alarme já ativo");
+        //}
+    }
+
+    public void AlarmeContext(){
+
+        boolean alarmeAtivo = (PendingIntent.getBroadcast(this, 0, new Intent("ALARME_CONTEXT"), PendingIntent.FLAG_NO_CREATE) == null);
+
+        if(alarmeAtivo){
+            Log.i("Script", "Novo alarme");
+
+            Intent intent = new Intent("ALARME_CONTEXT");
+            PendingIntent p = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(System.currentTimeMillis());
+            c.add(Calendar.SECOND, 3);
+
+            AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
+            alarme.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), (60000*5), p);
+            alarme.cancel(p);
+        }else{
+            Log.i("Script", "Alarme já ativo");
+        }
+    }
 
 }

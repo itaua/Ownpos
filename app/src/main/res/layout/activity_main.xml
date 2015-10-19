@@ -1,27 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/grey"
     tools:context=".MainActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/mToolbar"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_width="match_parent"
-        android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary" />
-
-    <RelativeLayout
-        android:id="@+id/rl_fragment_container"
-        android:layout_below="@+id/mToolbar"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/inc_toolbar_botton">
-    </RelativeLayout>
+        android:fitsSystemWindows="true">
 
-    <include
-        android:id="@+id/inc_toolbar_botton"
-        layout="@layout/toolbar_mbotton"/>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tb_main"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="0dp"
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
 
-</RelativeLayout>
+        <itauamachado.ownpos.extras.SlidingTabLayout
+            android:id="@+id/stl_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true">
+
+        </itauamachado.ownpos.extras.SlidingTabLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+    <!-- Float do menu principal (contextos)-->
+        <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab_menu_contexto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="@dimen/fab_margin_bottom"
+        android:layout_marginEnd="@dimen/fab_margin_right"
+        android:layout_marginRight="@dimen/fab_margin_right"
+        fab:menu_shadowColor="@color/shadow"
+        fab:menu_colorNormal="@color/fab"
+        fab:menu_colorPressed="@color/fab_pressed">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_contexto1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_contexto2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_contexto3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+    <!-- Float da Biblioteca-->
+        <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab_menu_biblioteca"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="@dimen/fab_margin_bottom"
+        android:layout_marginEnd="@dimen/fab_margin_right"
+        android:layout_marginRight="@dimen/fab_margin_right"
+        fab:menu_shadowColor="@color/shadow"
+        fab:menu_colorNormal="@color/fab"
+        fab:menu_colorPressed="@color/fab_pressed">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_biblioteca1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_biblioteca2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </com.github.clans.fab.FloatingActionMenu>
+
+    <!-- Float das Tarefas -->
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab_menu_tarefas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="@dimen/fab_margin_bottom"
+        android:layout_marginEnd="@dimen/fab_margin_right"
+        android:layout_marginRight="@dimen/fab_margin_right"
+        fab:menu_shadowColor="@color/shadow"
+        fab:menu_colorNormal="@color/fab"
+        fab:menu_colorPressed="@color/fab_pressed">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_tarefa1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_tarefa2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </com.github.clans.fab.FloatingActionMenu>
+
+</android.support.design.widget.CoordinatorLayout>

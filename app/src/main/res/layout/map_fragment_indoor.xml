@@ -1,14 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
 
-    <ImageView
-        android:id="@+id/mapaIndoor"
+    <RelativeLayout
+        android:id="@+id/text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#333">
+    </RelativeLayout>
 
 
-</LinearLayout>
+    <itauamachado.ownpos.extras.mapa.views.PinView
+        android:id="@+id/imageView"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</RelativeLayout>

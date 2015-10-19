@@ -1,39 +1,49 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="itauamachado.ownpos" >
+    package="itauamachado.ownpos">
 
+
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
-
-    <!-- ATLAS INDOOR
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" / -->
+    <!-- uses-permission android:name="android.permission.GET_TASKS" / -->
+
+    <!-- permission android:protectionLevel="signature"
+        android:name="itauamachado.ownpos.permission.C2D_MESSAGE" />
+    <uses-permission android:name="itauamachado.ownpos.permission.C2D_MESSAGE" / -->
+
 
     <application
+        android:name="itauamachado.ownpos.application.CustomApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ownpos_icon"
         android:label="@string/app_name"
-        android:theme="@style/Theme.OwnposTheme" >
+        android:theme="@style/Theme.MyTheme"
+        >
 
         <meta-data
-        android:name="com.google.android.gms.version"
-        android:value="@integer/google_play_services_version" />
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
+        <service
+            android:name=".service.LocationIntentService"
+            android:exported="false" />
 
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=
@@ -41,23 +51,93 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:label="@string/app_name" />
 
-        <service
-            android:name=".service.LocationIntentService"
-            android:exported="false" />
-
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:name=".LoginActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name=".IndoorMap"
-            android:label="@string/app_name" >
+            android:name=".Detalhe_Acervo_Activity"
+            android:theme="@style/Theme.ContactActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_contact"/>
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_label"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".MapaActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:screenOrientation="portrait"
+            android:label="@string/app_label"
+            android:parentActivityName="itauamachado.ownpos.MainActivity">
+                <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="itauamachado.ownpos.MainActivity"/>
         </activity>
 
-    </application>
+        <activity
+            android:name=".Detalhe_Andar_Activity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:label="@string/app_label"
+            android:screenOrientation="portrait"/>
 
+        <activity
+            android:name=".ContextosActivity"
+            android:configChanges="orientation|screenSize|uiMode"
+            android:label="@string/app_label"
+            android:screenOrientation="portrait"/>
+
+        <receiver
+            android:name=".service.BReceiver_Context"
+            android:label="BroadcastReceiverAux">
+            <intent-filter>
+                <action android:name="ALARME_CONTEXT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".service.BReceiver_Location"
+            android:label="BroadcastReceiverAux">
+            <intent-filter>
+                <action android:name="ALARME_LOCATION"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </receiver>
+
+
+        <service
+            android:name=".service.JobSchedulerService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false"/>
+
+        <!-- PARSE CONF -->
+        <!-- service android:name="com.parse.PushService" />
+        <receiver android:name=".receiver.CustomPushReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.parse.push.intent.RECEIVE" />
+                <action android:name="com.parse.push.intent.DELETE" />
+                <action android:name="com.parse.push.intent.OPEN" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.parse.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="itauamachado.ownpos" />
+            </intent-filter>
+        </receiver -->
+
+    </application>
 </manifest>

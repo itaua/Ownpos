@@ -3,7 +3,7 @@ package itauamachado.ownpos.interfaces;
 import android.view.View;
 
 /**
- * Created by Itauá on 22/08/2015.
+ * Created by viniciusthiengo on 4/5/15.
  */
 public interface RecyclerViewOnClickListenerHack {
     public void onClickListener(View view, int position);
