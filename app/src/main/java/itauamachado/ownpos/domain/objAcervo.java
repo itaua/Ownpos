@@ -25,6 +25,7 @@ public class objAcervo implements Parcelable {
     private String pdico;
     private String serie;
     private String adicionado;
+    private boolean disponivel;
 
     public objAcervo(){}
 
@@ -47,6 +48,13 @@ public class objAcervo implements Parcelable {
         this.adicionado = adicionado;
     }
 
+    public boolean isDisponivel() {
+        return disponivel;
+    }
+
+    public void setDisponivel(boolean disponivel) {
+        this.disponivel = disponivel;
+    }
 
     public long get_id() {
         return _id;

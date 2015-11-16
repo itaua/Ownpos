@@ -202,47 +202,50 @@ public class PinView extends SubsamplingScaleImageView {
 
     private double distancia(PointF origem, PointF dest){
 
-        double distancia;
+        double distancia = 0;
         float eixoX;
         float eixoY;
         float QuadY;
         float QuadX;
 
-        if(origem.x==dest.x){
-            distancia = origem.y - dest.y;
-            distancia = distancia > 0.0 ? distancia : distancia*-1;
-            return (distancia);
-        }else if(origem.y == dest.y){
-            distancia = origem.x - dest.x;
-            distancia = distancia > 0.0 ? distancia : distancia*-1;
-            return (distancia);
-        }
+        try {
+            if(origem.x==dest.x){
+                distancia = origem.y - dest.y;
+                distancia = distancia > 0.0 ? distancia : distancia*-1;
+                return (distancia);
+            }else if(origem.y == dest.y){
+                distancia = origem.x - dest.x;
+                distancia = distancia > 0.0 ? distancia : distancia*-1;
+                return (distancia);
+            }
 
-        if(origem.x > dest.x) {
-            eixoX = origem.x;
-        }else{
-            eixoX = dest.x;
-        }
-        if(origem.y > dest.y){
-            eixoY = origem.y;
-        }else{
-            eixoY = dest.y;
-        }
+            if(origem.x > dest.x) {
+                eixoX = origem.x;
+            }else{
+                eixoX = dest.x;
+            }
+            if(origem.y > dest.y){
+                eixoY = origem.y;
+            }else{
+                eixoY = dest.y;
+            }
 
-        if(eixoX==origem.x){
-            QuadX = (eixoX - dest.x)*(eixoX - dest.x);
-        }else{
-            QuadX = (eixoX - origem.x)*(eixoX - origem.x);
-        }
+            if(eixoX==origem.x){
+                QuadX = (eixoX - dest.x)*(eixoX - dest.x);
+            }else{
+                QuadX = (eixoX - origem.x)*(eixoX - origem.x);
+            }
 
-        if(eixoY==origem.y){
-            QuadY = (eixoY - dest.y)*(eixoY - dest.y);
-        }else{
-            QuadY = (eixoY - origem.y)*(eixoY - origem.y);
+            if(eixoY==origem.y){
+                QuadY = (eixoY - dest.y)*(eixoY - dest.y);
+            }else{
+                QuadY = (eixoY - origem.y)*(eixoY - origem.y);
+            }
+            distancia = QuadX+QuadY;
+            distancia = Math.sqrt(distancia);
+        }catch (NullPointerException e){
+            Util.log(e.toString());
         }
-
-        distancia = QuadX+QuadY;
-        distancia = Math.sqrt(distancia);
         return (distancia);
     }
 

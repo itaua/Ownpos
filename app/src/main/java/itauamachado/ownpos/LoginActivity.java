@@ -1,6 +1,5 @@
 package itauamachado.ownpos;
 
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
@@ -39,9 +38,6 @@ import itauamachado.ownpos.domain.WrapObjToNetwork;
 import itauamachado.ownpos.extras.Util;
 import itauamachado.ownpos.network.NetworkConnection;
 import itauamachado.ownpos.network.Transaction;
-import itauamachado.ownpos.service.JobSchedulerService;
-import me.tatarka.support.job.JobInfo;
-import me.tatarka.support.job.JobScheduler;
 
 public class LoginActivity  extends AppCompatActivity implements
         GoogleApiClient.ConnectionCallbacks,
@@ -162,7 +158,7 @@ public class LoginActivity  extends AppCompatActivity implements
         mLoginFace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mLoginFace.getText().toString()=="LOGOUT"){
+                if(mLoginFace.getText().toString().equalsIgnoreCase("LOGOUT")){
                     LoginManager.getInstance().logOut();
                 }else{
                     lastUserLogged = null;

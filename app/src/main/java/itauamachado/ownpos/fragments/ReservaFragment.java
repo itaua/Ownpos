@@ -23,7 +23,7 @@ import itauamachado.ownpos.extras.Util;
 import itauamachado.ownpos.interfaces.RecyclerViewOnClickListenerHack;
 import me.drakeet.materialdialog.MaterialDialog;
 
-public class TarefasFragment extends Fragment implements RecyclerViewOnClickListenerHack {
+public class ReservaFragment extends Fragment implements RecyclerViewOnClickListenerHack {
 
     private RecyclerView mRecyclerView;
     private List<objAcervo> mList;

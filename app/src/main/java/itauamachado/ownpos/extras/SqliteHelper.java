@@ -46,6 +46,7 @@ public class SqliteHelper extends SQLiteOpenHelper {
         setTableAulas(bd);
         setTableEventos(bd);
         setTableNavigation(bd);
+        setTableConfig(bd);
     }
 
     @Override
@@ -60,6 +61,7 @@ public class SqliteHelper extends SQLiteOpenHelper {
         bd.execSQL("drop table " + TABLE_AULAS + ";");
         bd.execSQL("drop table " + TABLE_EVENTOS + ";");
         bd.execSQL("drop table " + TABLE_NAVIGATION + ";");
+        bd.execSQL("drop table " + TABLE_CONF_NOTIFICATION + ";");
 
         onCreate(bd);
     }
@@ -176,7 +178,8 @@ public class SqliteHelper extends SQLiteOpenHelper {
                 "    assun  TEXT, " +
                 "    url    TEXT, " +
                 "    pdico  TEXT, " +
-                "    serie  TEXT " +
+                "    serie  TEXT, " +
+                "    dispo  TEXT  "+
         ");";
         bd.execSQL(create_table+colunas);
     }
@@ -228,10 +231,8 @@ public class SqliteHelper extends SQLiteOpenHelper {
         String create_table = "CREATE TABLE "+ TABLE_CONF_NOTIFICATION;
         String colunas = "( " +
                 "    _id    INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "    Push DATE, " +
-                "    NCursos DATE, " +
-                "    NCursosNave DATE, " +
-                "    NNoticias DATE);";
+                "    tipo TEXT, " +
+                "    dia DATE);";
         bd.execSQL(create_table+colunas);
     }
 

@@ -150,8 +150,8 @@ public class NoticiasFragment extends Fragment implements RecyclerViewOnClickLis
 
     @Override
     public void onClickListener(View view, int position) {
-        Intent intent = null;
-        intent = new Intent(Intent.ACTION_VIEW);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Util.log(mList.get(position).getLink());
         intent.setData(Uri.parse(mList.get(position).getLink()));
         startActivity(intent);
     }

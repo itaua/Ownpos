@@ -34,7 +34,7 @@ public class IndoorMap implements
         private String mFloorPlanId;
         private boolean mIsPositioning;
 
-        private Context mContext;
+        //private Context mContext;
 
         private final SensorManager mSensorManager;
         private boolean MagneticFiled = false;
@@ -45,11 +45,11 @@ public class IndoorMap implements
 
 
     public IndoorMap(Context c, String FloorId, String FloorPlanId ){
-        mContext = c;
+        //mContext = c;
         mFloorId = FloorId;
         mFloorPlanId = FloorPlanId;
 
-        mSensorManager = (SensorManager) mContext.getSystemService(mContext.SENSOR_SERVICE);
+        mSensorManager = (SensorManager) c.getSystemService(c.SENSOR_SERVICE);
         List<Sensor> lista = mSensorManager.getSensorList(Sensor.TYPE_ALL);
 
         if (lista.size() != 0){
@@ -76,7 +76,7 @@ public class IndoorMap implements
 
 
         if(MagneticFiled==Accelerometer==Gyroscope == true){
-            initIndoorAtlas();
+            initIndoorAtlas(c);
             //stopPositioning();
         }
         //usar no onDestroy
@@ -121,7 +121,7 @@ public class IndoorMap implements
     }
 
     //IndoorAtlas Method
-    private void initIndoorAtlas() {
+    private void initIndoorAtlas(Context mContext) {
 
         mPercentual = 0.0f;
         try {
@@ -149,8 +149,6 @@ public class IndoorMap implements
      */
     public void onServiceUpdate(ServiceState state) {
 
-
-        if(mPercentual > 0.90f){
             MessageEB eb = new MessageEB();
             eb.setmTag(MessageEB.TAG_INDOOR_ATLAS);
 
@@ -177,10 +175,9 @@ public class IndoorMap implements
              " heading : "+ state.getHeadingDegrees() +
              " uncertainty: "+ state.getUncertainty());
              **/
+            eb.setPercentual(mPercentual);
             eb.setmResult(result);
             EventBus.getDefault().post(eb);
-            stopPositioning();
-        }
     }
 
 
@@ -215,6 +212,12 @@ public class IndoorMap implements
 
         mPercentual = calibrationState.getPercentage();
         Util.log("onCalibrationStatus, percentage: " + calibrationState.getPercentage());
+
+        MessageEB eb = new MessageEB();
+        eb.setmTag(MessageEB.TAG_INDOOR_ATLAS);
+        eb.setPercentual(mPercentual);
+        eb.setOwnpos(null);
+        EventBus.getDefault().post(eb);
     }
 
     /**

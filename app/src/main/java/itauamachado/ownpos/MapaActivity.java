@@ -4,6 +4,7 @@ package itauamachado.ownpos;
 
 import android.content.Intent;
 import android.graphics.PointF;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -64,11 +65,11 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
     private FloatingActionMenu mFabMenu;
     private FloatingActionButton mFabIndoorAtlas;
     private FloatingActionButton mFabWiFi;
-
+    private TextView mLogMapa;
+    private String mLogMapaText;
 
 
     //iten de configuração
-
     private int mMapSelected;
     private List<Andares> mList;
     private List<ItensMapa> mItensMapaList;
@@ -79,6 +80,7 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
     private ItensMapa mPointB;
     private PinView mImageView;
     private Handler handler;
+
     //indoor
     private boolean isIndoorActived = false;
     private IndoorMap indoorMap;
@@ -127,18 +129,36 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
         initialiseImage();
         EventBus.getDefault().register(this);
 
-
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mFabMenu.showMenu(true);
+                }
+            }, 700);
+        }
 
     }
 
     public void onEvent(final MessageEB m){
 
         if (m.getmTag().equalsIgnoreCase(MessageEB.TAG_INDOOR_ATLAS)){
-            mOwnpos = m.getOwnpos();
-            newPos = true;
-            indoorMap.stopPositioning();
-            isIndoorActived = false;
-            Util.log("Veio resposta de posição");
+            if((m.getPercentual() > 0.8f) && (m.getOwnpos()!=null)){
+                mOwnpos = m.getOwnpos();
+                newPos = true;
+                indoorMap.stopPositioning();
+                isIndoorActived = false;
+                Util.log("Veio resposta de posição");
+            }
+            final float a = m.getPercentual()*100;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Util.log("Progresso de leitura... "+ a +"%");
+                    mLogMapa.setText("Progresso de leitura... "+ a +"%");
+                }
+            });
+
         }else
         if (m.getmTag().equalsIgnoreCase(MessageEB.TAG_WIFI_INFO)){
             Util.log("TAG_WIFI_INFO");
@@ -169,7 +189,6 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
         //Wi-Fi BroadCast
         Util.getWiFi(MapaActivity.this);
     }
-
     public void callVolleyRequest() {
         NetworkConnection.getInstance(this).execute(this, MapaActivity.class.getName());
     }
@@ -239,12 +258,14 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
                                     public void onClick(View v) {
                                         mImageView.setPontoB(item);
                                         mMaterialDialog.dismiss();
+                                        mLogMapa.setText("");
                                     }
                                 })
                                 .setNegativeButton("Fechar", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         mMaterialDialog.dismiss();
+                                        mLogMapa.setText("");
                                     }
                                 });
                         mMaterialDialog.show();
@@ -258,9 +279,7 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
 
             @Override
             public void onLongPress(MotionEvent e) {
-                if (mImageView.isReady()) {
-
-                } else {
+                if (!(mImageView.isReady())) {
                     Toast.makeText(getApplicationContext(), "Long press: Image not ready", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -288,6 +307,8 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
 
     //Segundo Layout
     private void initialiseLayout() {
+
+        mLogMapa = (TextView) findViewById(R.id.logMap);
         //setSupportActionBar((Toolbar) findViewById(R.id.main_toolbar));
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         mLayout.setAnchorPoint(0.7f);
@@ -354,6 +375,7 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
                     buscaPosicaoIndoor();
                     mImageView.setOwnpos(); // thread pra desenhar
                     setOwnposIndoorAtlas(); // thread pra perguntar se aceita posição
+
                 }
             }
         });
@@ -364,14 +386,12 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
             @Override
             public void onClick(View v) {
                 mFabMenu.close(true);
-                Toast.makeText(MapaActivity.this, "parando busca de local wifi", Toast.LENGTH_SHORT).show();
                 buscaPosicaoWiFi();
                 mImageView.setOwnpos(); // thread pra desenhar
                 setOwnposWiFi();        // thread pra perguntar se aceita posição
             }
         });
     }
-
 
     @Override
     public WrapObjToNetwork doBefore() {
@@ -394,6 +414,7 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
                         @Override
                         public void onClick(View v) {
                             mMaterialDialog.dismiss();
+                            mLogMapa.setText("");
                         }
                     });
             mMaterialDialog.show();
@@ -507,6 +528,7 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
                                     public void onClick(View v) {
                                         mImageView.setPontoA(itensMapa);
                                         mMaterialDialog.dismiss();
+                                        mLogMapa.setText("");
                                     }
                                 })
                                 .setNegativeButton("rejeitar", new View.OnClickListener() {
@@ -521,12 +543,14 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
                                             public void onClick(View v) {
                                                 mImageView.setPontoA(null);
                                                 n.dismiss();
+                                                mLogMapa.setText("");
                                             }
                                         });
                                         n.setNegativeButton("rejeitar", new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
                                                 n.dismiss();
+                                                mLogMapa.setText("");
                                             }
                                         });
                                         n.show();
@@ -561,12 +585,14 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
                                     public void onClick(View v) {
                                         mImageView.setPontoA(itensMapa);
                                         mMaterialDialog.dismiss();
+                                        mLogMapa.setText("");
                                     }
                                 })
                                 .setNegativeButton("rejeitar", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         mMaterialDialog.dismiss();
+                                        mLogMapa.setText("");
                                         final MaterialDialog n = new MaterialDialog(new ContextThemeWrapper(MapaActivity.this, R.style.MyAlertDialog));
                                         n.setTitle("Posição sugerida...");
                                         n.setMessage("Navegar a partir da entrada");
@@ -575,12 +601,14 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
                                             public void onClick(View v) {
                                                 mImageView.setPontoA(null);
                                                 n.dismiss();
+                                                mLogMapa.setText("");
                                             }
                                         });
                                         n.setNegativeButton("rejeitar", new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
                                                 n.dismiss();
+                                                mLogMapa.setText("");
                                             }
                                         });
                                         n.show();
@@ -591,18 +619,20 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
 
                             mMaterialDialog = new MaterialDialog(new ContextThemeWrapper(MapaActivity.this, R.style.MyAlertDialog))
                                     .setTitle("Não foi possivel determinar posição.")
-                                    .setMessage("Utilizar ponto de partida como sendo a porta de acessp principal?")
+                                    .setMessage("Utilizar ponto de partida como sendo a porta de acesso principal?")
                                     .setPositiveButton("Aceitar", new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
                                             mImageView.setPontoA(null);
                                             mMaterialDialog.dismiss();
+                                            mLogMapa.setText("");
                                         }
                                     })
                                     .setNegativeButton("rejeitar", new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
                                             mMaterialDialog.dismiss();
+                                            mLogMapa.setText("");
                                         }
                                     });
                             mMaterialDialog.show();
@@ -612,4 +642,5 @@ public class MapaActivity extends AppCompatActivity implements RecyclerViewOnCli
             }
         }.start();
     }
+
 }

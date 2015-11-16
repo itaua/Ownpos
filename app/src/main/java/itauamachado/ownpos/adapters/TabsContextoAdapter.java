@@ -7,8 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import itauamachado.ownpos.extras.Util;
 import itauamachado.ownpos.fragments.Ctx_AulasFragment;
 import itauamachado.ownpos.fragments.Ctx_ChatFragment;
-import itauamachado.ownpos.fragments.TarefasFragment;
-import itauamachado.ownpos.fragments.TurmasFragment;
+import itauamachado.ownpos.fragments.ReservaFragment;
 
 
 public class TabsContextoAdapter extends FragmentPagerAdapter {
@@ -37,13 +36,13 @@ public class TabsContextoAdapter extends FragmentPagerAdapter {
         Fragment frag = null;
         String tab = mtitles[position];
 
-        if(tab == "TURMA"){
+        if(tab.equalsIgnoreCase("TURMA")){
             frag = new Ctx_AulasFragment();
         }else
-        if(tab == "TAREFA"){
-            frag = new TarefasFragment();
+        if(tab.equalsIgnoreCase("TAREFA")){
+            frag = new ReservaFragment();
         }else
-        if(tab == "CHAT") {
+        if(tab.equalsIgnoreCase("CHAT")) {
             frag = new Ctx_ChatFragment();
         }
             return frag;

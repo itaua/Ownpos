@@ -1,22 +1,11 @@
 package itauamachado.ownpos.service;
 
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -24,16 +13,9 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.indooratlas.internal.core.WifiReceiver;
-
-
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import itauamachado.ownpos.MainActivity;
-import itauamachado.ownpos.R;
 import itauamachado.ownpos.domain.MessageEB;
-import itauamachado.ownpos.domain.NavigationWiFi;
 import itauamachado.ownpos.domain.SQLiteConn;
 import itauamachado.ownpos.extras.Util;
 
@@ -47,17 +29,13 @@ public class BReceiver_Location extends BroadcastReceiver implements
 	private MessageEB mMessageEB;
 	private LocationRequest mLocationRequest;
 
-
-
 	private Context mContext;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
 		mContext = context;
-
 		Util.log("onReceive LOCATION - BUSCANDO");
-
 		callConnection();
 
 	}
@@ -174,7 +152,6 @@ public class BReceiver_Location extends BroadcastReceiver implements
 		return 6378140 * distancia; /* 6378140 is the radius of the Earth in meters*/
 
 	}
-
 
 
 }

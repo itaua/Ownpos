@@ -1,17 +1,13 @@
 package itauamachado.ownpos.adapters;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ImageSpan;
 
 import itauamachado.ownpos.extras.Util;
 import itauamachado.ownpos.fragments.AcervoFragment;
-import itauamachado.ownpos.fragments.TarefasFragment;
+import itauamachado.ownpos.fragments.ReservaFragment;
 import itauamachado.ownpos.fragments.CursosEadFragment;
 import itauamachado.ownpos.fragments.CursosFragment;
 import itauamachado.ownpos.fragments.MainFragment;
@@ -19,9 +15,7 @@ import itauamachado.ownpos.fragments.NoticiasFragment;
 import itauamachado.ownpos.fragments.AgendaFragment;
 import itauamachado.ownpos.fragments.TurmasFragment;
 
-/**
- * Created by viniciusthiengo on 5/18/15.
- */
+
 public class TabsMainAdapter extends FragmentPagerAdapter {
 
     private Boolean mIconView = false;
@@ -55,27 +49,27 @@ public class TabsMainAdapter extends FragmentPagerAdapter {
         Fragment frag = null;
         String tab = mtitles[position];
 
-        if(tab == "MENU"){
+        if(tab.equalsIgnoreCase("MENU")){
             frag = new MainFragment();
         }else
-        if(tab == "BIBLIOTECA"){
+        if(tab.equalsIgnoreCase("BIBLIOTECA")){
             frag = new AcervoFragment();
         }else
-        if(tab=="NOTICIAS"){
+        if(tab.equalsIgnoreCase("NOTICIAS")){
             frag = new NoticiasFragment();
         }else
-        if(tab=="CURSOS") {
+        if(tab.equalsIgnoreCase("CURSOS")){
             frag = new CursosFragment();
-        }else if(tab=="CURSOS EAD") {
+        }else if(tab.equalsIgnoreCase("CURSOS EAD")) {
             frag = new CursosEadFragment();
         }else
-        if(tab=="TAREFAS"){
-            frag = new TarefasFragment();
+        if(tab.equalsIgnoreCase("RESERVAS")){
+            frag = new ReservaFragment();
         }else
-        if(tab=="TURMAS"){
+        if(tab.equalsIgnoreCase("TURMAS")){
             frag = new TurmasFragment();
         }else
-        if(tab=="AGENDA"){
+        if(tab.equalsIgnoreCase("AGENDA")){
             frag = new AgendaFragment();
         }
         return frag;

@@ -4,9 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
-/**
- * Created by viniciusthiengo on 5/10/15.
- */
+
 public class objUsuario implements Parcelable {
 
     private String id;
@@ -20,6 +18,7 @@ public class objUsuario implements Parcelable {
     private String status;
     private int background;
     private ProfileDrawerItem profile;
+
 
 
     public objUsuario(){

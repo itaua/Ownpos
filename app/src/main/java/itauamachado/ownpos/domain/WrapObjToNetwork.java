@@ -1,8 +1,6 @@
 package itauamachado.ownpos.domain;
 
-/**
- * Created by viniciusthiengo on 7/26/15.
- */
+
 public class WrapObjToNetwork {
 
     private objAcervo biblioteca;
@@ -23,6 +21,8 @@ public class WrapObjToNetwork {
     private String usuario_nome;
     private String usuario_mail;
     private String usuario_login;
+    private String usuario_id;
+    private String gcm;
 
     //tarefas, reservas e aulas
     private int id;
@@ -61,6 +61,27 @@ public class WrapObjToNetwork {
         this.id = id;
     }
 
+    public WrapObjToNetwork(String id_senac, String method, String token) {
+        this.method = method;
+        this.usuario_id = id_senac;
+        this.gcm = token;
+    }
+
+    public String getGcm() {
+        return gcm;
+    }
+
+    public void setGcm(String gcm) {
+        this.gcm = gcm;
+    }
+
+    public String getUsuario_id() {
+        return usuario_id;
+    }
+
+    public void setUsuario_id(String usuario_id) {
+        this.usuario_id = usuario_id;
+    }
 
     public String getUsuario_nome() {
         return usuario_nome;

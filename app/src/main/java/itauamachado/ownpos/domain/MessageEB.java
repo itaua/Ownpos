@@ -15,6 +15,7 @@ public class MessageEB {
     private ItensMapa pontoB;
     private String mTag;
     private boolean noSENAC = false;
+    private float percentual;
 
     //TAG MessageBus
     public static final String TAG_WIFI_INFO = "wfInfo";
@@ -22,6 +23,14 @@ public class MessageEB {
     public static final String TAG_LOCATION_API = "locationAPI";
     public static final String TAG_LOCATION = "JobScheduler";
     public static final String TAG_MAPA_INDOOR = "mapaIndoor";
+
+    public float getPercentual() {
+        return percentual;
+    }
+
+    public void setPercentual(float percentual) {
+        this.percentual = percentual;
+    }
 
     public boolean isNoSENAC() {
         return noSENAC;

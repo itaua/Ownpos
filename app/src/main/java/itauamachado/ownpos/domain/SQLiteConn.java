@@ -39,7 +39,7 @@ public class SQLiteConn {
                     "urlPhoto",
                     "urlSite",
                     "perfil",
-                    "status"};
+                    "status" };
 
             Cursor cursor = bd.query(SqliteHelper.TABLE_PROFILE, colunas, null, null, null, null, "nome ASC");
 
@@ -500,6 +500,7 @@ public class SQLiteConn {
             return turmaList;
         }
 
+
     //TAREFAS
         public List<objContextos> getTarefas(){
             bd = auxBd.getReadableDatabase();
@@ -538,7 +539,7 @@ public class SQLiteConn {
                         }
 
                     }catch (ParseException e){
-
+                        Util.log(e.toString());
                     }
                     item.setObs(cursor.getString(6));
                     contextosArrayList.add(item);
@@ -586,7 +587,7 @@ public class SQLiteConn {
                         }
 
                     }catch (ParseException e){
-
+                        Util.log(e.toString());
                     }
                     item.setObs(cursor.getString(6));
                     contextosArrayList.add(item);
@@ -622,7 +623,7 @@ public class SQLiteConn {
             PointF p = new PointF();
             String tabela = SqliteHelper.TABLE_NAVIGATION;
 
-            String[] colunas = new String[]{"With", "Height"};
+           //String[] colunas = new String[]{"With", "Height"};
             String[] joins = new String[]{"Z", "A", "B", "C", "D", "E", "F", "G"};
 
             String query = "";
@@ -653,5 +654,65 @@ public class SQLiteConn {
             return p;
         }
 
+    //NOTFICATION
+        public List<String> getNotifications(){
+            List<String> result = new ArrayList<>();
+            bd = auxBd.getReadableDatabase();
 
+            //String[] colunas = new String[]{ "tipo", "dia"};
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+            String tabela = SqliteHelper.TABLE_CONF_NOTIFICATION;
+            //Cursor cursor = bd.query(true, tabela, colunas, "dia = " + sdf.format(new Date()), null, null, null, null, null);
+            String query = "SELECT tipo, dia from "+ tabela +" WHERE  dia = '"+sdf.format(new Date())+"'";
+
+
+            Cursor cursor = bd.rawQuery(query, null);
+            //Util.log(query);
+
+            if(cursor.getCount() > 0){
+                cursor.moveToFirst();
+                do{
+                    result.add(cursor.getString(0));
+                }while(cursor.moveToNext());
+            }
+
+            bd.close();
+            return result;
+        }
+
+        public void setNotification(String tipo){
+            bd = auxBd.getWritableDatabase();
+            String tabela = SqliteHelper.TABLE_CONF_NOTIFICATION;
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            ContentValues valores = new ContentValues();
+            valores.put("tipo", tipo);
+            valores.put("dia", sdf.format(new Date()));
+            bd.insert(tabela, null, valores);
+            Util.log("Tipo:"+tipo + " Data: "+valores.getAsString("dia"));
+            bd.close();
+        }
+
+        public void cleardNotifications(){
+            List<String> result = new ArrayList<>();
+            bd = auxBd.getReadableDatabase();
+
+
+            //String[] colunas = new String[]{ "tipo", "dia"};
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+            String tabela = SqliteHelper.TABLE_CONF_NOTIFICATION;
+
+            int delete = bd.delete(SqliteHelper.TABLE_CONF_NOTIFICATION, "dia < '" + sdf.format(new Date())+"'", null);
+            Util.log("cleardNotifications("+delete+") dia: " + sdf.format(new Date()));
+
+            delete = bd.delete(SqliteHelper.TABLE_CONF_NOTIFICATION, "dia = '" + sdf.format(new Date())+"'", null);
+            Util.log("cleardNotifications("+delete+") dia: " + sdf.format(new Date()));
+
+
+            bd.close();
+        }
 }

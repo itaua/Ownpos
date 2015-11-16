@@ -2,24 +2,18 @@ package itauamachado.ownpos;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +26,8 @@ import android.widget.Toast;
 
 
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
@@ -46,20 +42,17 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import itauamachado.ownpos.adapters.TabsMainAdapter;
-import itauamachado.ownpos.domain.NavigationWiFi;
 import itauamachado.ownpos.domain.SQLiteConn;
 import itauamachado.ownpos.domain.MessageEB;
 import itauamachado.ownpos.domain.objUsuario;
 import itauamachado.ownpos.extras.SlidingTabLayout;
 import itauamachado.ownpos.extras.Util;
-import itauamachado.ownpos.service.JobSchedulerService;
-import itauamachado.ownpos.service.LocationIntentService;
-import me.tatarka.support.job.JobInfo;
-import me.tatarka.support.job.JobScheduler;
+import itauamachado.ownpos.service.RegistrationIntentService;
 
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     private Toolbar mToolbar;
 
@@ -106,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
         setContentView(R.layout.activity_main);
         mUsuario = new SQLiteConn(this).getUserLogged();
 
@@ -131,6 +123,10 @@ public class MainActivity extends AppCompatActivity {
         AlarmeLocation();
         AlarmeContext();
 
+        if( checkPlayServices() ){
+            Intent it = new Intent(this, RegistrationIntentService.class);
+            startService(it);
+        }
 
         //List<NavigationWiFi> resultados = new SQLiteConn(this).getNavigationWiFi();
         //for (int i = 0; i < resultados.size(); i++){
@@ -148,6 +144,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Util.log("This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
     public void setFloatingActionMenu(){
         fab_menu = (FloatingActionMenu) findViewById(R.id.fab_menu_contexto);
         fab_menu.hideMenu(false);
@@ -156,8 +167,6 @@ public class MainActivity extends AppCompatActivity {
         fab_menu = (FloatingActionMenu) findViewById(R.id.fab_menu_tarefas);
         fab_menu.hideMenu(false);
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -208,9 +217,9 @@ public class MainActivity extends AppCompatActivity {
     // ItensMenuPrincipal
     private List<PrimaryDrawerItem> getSetItemDrawerLeft(){
 
-        String[] names = null;
-        int[] icons = null;
-        int[] iconsSelected = null;
+        String[] names;
+        int[] icons;
+        int[] iconsSelected;
 
         if(mUsuario.getPerfil().equalsIgnoreCase(Util.PERFIL_VISITANTE)){
             names = Util.TITULOS_DRAWER_ANONIMO;
@@ -223,7 +232,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         List<PrimaryDrawerItem> list = new ArrayList<>();
-        list = new ArrayList<>();
         for(int i = 0; i < names.length; i++){
             PrimaryDrawerItem aux = new PrimaryDrawerItem();
             aux.setName(names[i]);
@@ -239,9 +247,6 @@ public class MainActivity extends AppCompatActivity {
 
     protected void montaTab(){
         mViewPager = (ViewPager) findViewById(R.id.vp_tabs);
-
-
-
         mViewPager.setAdapter(new TabsMainAdapter(getSupportFragmentManager(), this, mUsuario.getPerfil()));
 
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.stl_tabs);
@@ -276,6 +281,27 @@ public class MainActivity extends AppCompatActivity {
         mSlidingTabLayout.setViewPager(mViewPager);
     }
 
+
+    public void setTabSelected(String tabSelected){
+
+
+        String[] mtitles;
+        if(mUsuario.getPerfil().equalsIgnoreCase(Util.PERFIL_VISITANTE)){
+            mtitles = Util.TITULOS_TAB_ANONIMO;
+        }else{
+            mtitles = Util.TITULO_TAB;
+        }
+        for (int i = 0; i < mtitles.length;i++){
+            if(mtitles[i].equalsIgnoreCase(tabSelected)){
+                mViewPager.setCurrentItem(i);
+            }
+        }
+    }
+
+    public String getPerfil(){
+        return mUsuario.getPerfil();
+    }
+
     public void showFloatActionButton(String tabName){
 
         if(fab_menu.isOpened())
@@ -285,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
 
         int delay = 400;
 
-        if(tabName == "MENU"){
+        if(tabName.equalsIgnoreCase("MENU")){
             fab_menu = (FloatingActionMenu) findViewById(R.id.fab_menu_contexto);
             fab_menu.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_from_down));
             fab_menu.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_to_down));
@@ -297,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
             }, delay);
 
         }else
-        if(tabName == "BIBLIOTECA"){
+        if(tabName.equalsIgnoreCase("BIBLIOTECA")){
             fab_menu = (FloatingActionMenu) findViewById(R.id.fab_menu_biblioteca);
             fab_menu.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_from_down));
             fab_menu.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_to_down));
@@ -308,16 +334,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }, delay);
         }else
-        if(tabName=="NOTICIAS"){
+        if(tabName.equalsIgnoreCase("NOTICIAS")){
 
         }else
-        if(tabName=="CURSOS") {
+        if(tabName.equalsIgnoreCase("CURSOS")){
 
         }else
-        if(tabName=="CURSOS EAD") {
+        if(tabName.equalsIgnoreCase("CURSOS EAD")) {
 
         }else
-        if(tabName=="TAREFAS"){
+        if(tabName.equalsIgnoreCase("TAREFAS")){
             fab_menu = (FloatingActionMenu) findViewById(R.id.fab_menu_tarefas);
             fab_menu.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_from_down));
             fab_menu.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.jump_to_down));
@@ -329,10 +355,10 @@ public class MainActivity extends AppCompatActivity {
             }, delay);
 
         }else
-        if(tabName=="TURMAS"){
+        if(tabName.equalsIgnoreCase("TURMAS")){
 
         }else
-        if(tabName=="AGENDA"){
+        if(tabName.equalsIgnoreCase("AGENDA")){
 
         }
     }
@@ -430,6 +456,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     //JOBSCHEDULER
     /**
         public void onJobExecuteLocation(){
@@ -478,10 +505,10 @@ public class MainActivity extends AppCompatActivity {
     //ALARME
     public void AlarmeLocation(){
 
-        //boolean alarmeAtivo = (PendingIntent.getBroadcast(this, 0, new Intent("ALARME_DISPARADO"), PendingIntent.FLAG_NO_CREATE) == null);
+        //boolean alarmeAtivo = (PendingIntent.getBroadcast(this, 0, new Intent("ALARME_LOCATION"), PendingIntent.FLAG_NO_CREATE) == null);
 
-        //if(alarmeAtivo){
-        //    Log.i("Script", "Novo alarme");
+        // if(alarmeAtivo){
+        // Util.log("Novo alarme");
 
             Intent intent = new Intent("ALARME_LOCATION");
             PendingIntent p = PendingIntent.getBroadcast(this, 0, intent, 0);
@@ -491,19 +518,21 @@ public class MainActivity extends AppCompatActivity {
             c.add(Calendar.SECOND, 3);
 
             AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarme.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), (60*1000*5), p);
-        //}
-        //else{
-        //    Log.i("Script", "Alarme já ativo");
-        //}
+            alarme.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), (60 * 1000 * 30), p);
+        //  alarme.cancel(p);
+        //} else {
+        //      Util.log("ALARME_LOCATION já ativo");
+        //  }
     }
 
-    public void AlarmeContext(){
+    public void AlarmeContext() {
 
-        boolean alarmeAtivo = (PendingIntent.getBroadcast(this, 0, new Intent("ALARME_CONTEXT"), PendingIntent.FLAG_NO_CREATE) == null);
+        //boolean alarmeAtivo = (PendingIntent.getBroadcast(this, 0, new Intent("ALARME_CONTEXT"), PendingIntent.FLAG_NO_CREATE) == null);
+        //Util.log("AlarmeContext("+alarmeAtivo+")");
+        //if (alarmeAtivo) {
+        //    Util.log("Novo alarme");
 
-        if(alarmeAtivo){
-            Log.i("Script", "Novo alarme");
+            new SQLiteConn(this).cleardNotifications();
 
             Intent intent = new Intent("ALARME_CONTEXT");
             PendingIntent p = PendingIntent.getBroadcast(this, 0, intent, 0);
@@ -513,11 +542,10 @@ public class MainActivity extends AppCompatActivity {
             c.add(Calendar.SECOND, 3);
 
             AlarmManager alarme = (AlarmManager) getSystemService(ALARM_SERVICE);
-            alarme.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), (60000*5), p);
-            alarme.cancel(p);
-        }else{
-            Log.i("Script", "Alarme já ativo");
-        }
+            alarme.setRepeating(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), (60 * 1000 * 5), p);
+        //    alarme.cancel(p);
+        //}else{
+        //    Util.log("ALARME_CONTEXT já ativo");
+        //}
     }
-
 }

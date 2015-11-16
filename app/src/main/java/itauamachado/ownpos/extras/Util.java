@@ -12,7 +12,6 @@ import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -34,8 +33,14 @@ import itauamachado.ownpos.interfaces.RecyclerViewOnClickListenerHack;
 
 public class Util {
 
+    //Variavel url rota mapaOutdoor
+    public static final String LINK_OUTDOOR = "http://maps.google.com/maps";
 
     private static NavigationWiFi mNavigationWiFi;
+
+    //GCM
+        public static final String ServerAPIKey = "AIzaSyDxRNtqHaicUkmOhT6qU8mp0W_fRqdxk38";
+        public static final String SenderID = "798906214056";
 
     //Variaveis Contextos
         public static final String METHOD = "method";
@@ -77,7 +82,9 @@ public class Util {
 
     //Variaveis do sistema
         public static final String WEBSERVER = "http://www.itauamachado.com.br/ownpos/modulos/banco/webservice/package/ctrl/mCtrlObj.php";
+        public static final String URL_ACERVO_DISPONIVEL = "http://www.itauamachado.com.br/ownpos/modulos/data_mining/mAcervo_disponivel.php";
         public static final String LOCATION = "location";
+        public static final String REDE_SENAC = "SENAC-RS EDUCACIONAL";
 
 
     //Variaveis detalhes dos mapas
@@ -107,27 +114,20 @@ public class Util {
 
     //Variaveis de Tabs e Drawers
         public static final String[] TITULOS_DRAWER_ANONIMO =
-            {"Principal","Biblioteca","Noticias","Cursos", "Cursos à Distância"};
+            {"Principal","Biblioteca","Reservas","Cursos", "Cursos à Distância", "Noticias"};
         public static final String[] TITULOS_TAB_ANONIMO =
-            {"MENU","BIBLIOTECA","NOTICIAS", "CURSOS", "CURSOS EAD"};
+            {"MENU","BIBLIOTECA","RESERVAS", "CURSOS", "CURSOS EAD", "NOTICIAS"};
         public static final int[] ICONES_ANONIMO =
-            {R.mipmap.ic_view_list,R.mipmap.ic_library,R.mipmap.ic_newspaper, R.mipmap.ic_school, R.mipmap.ic_school};
+            {R.mipmap.ic_view_list,R.mipmap.ic_library,R.mipmap.ic_library, R.mipmap.ic_school, R.mipmap.ic_school,R.mipmap.ic_newspaper};
 
 
         public static final String[] TITULO_DRAWER =
-                {"Principal", "Turmas", "Compromissos", "Biblioteca", "Tarefas", "Cursos","Cursos à Distância", "Noticias"};
+                {"Principal", "Turmas", "Compromissos", "Biblioteca", "Reservas", "Cursos","Cursos à Distância", "Noticias"};
         public static final String[] TITULO_TAB=
-                {"MENU","TURMAS","AGENDA","BIBLIOTECA", "TAREFAS", "CURSOS","CURSOS EAD", "NOTICIAS"};
+                {"MENU","TURMAS","AGENDA","BIBLIOTECA", "RESERVAS", "CURSOS","CURSOS EAD", "NOTICIAS"};
         public static final int[] ICONES =
                 {R.mipmap.ic_view_list, R.mipmap.ic_book_open, R.mipmap.ic_calendar_clock, R.mipmap.ic_library,
                         R.mipmap.ic_calendar_clock, R.mipmap.ic_school, R.mipmap.ic_school, R.mipmap.ic_newspaper};
-
-
-    //TAGS JobSchdule
-        public static final String[] JOB_NAME = {"Location","Context","Notification"};
-        public static final int JOB_LOCATION_CODE = 1;
-        public static final int JOB_CONTEXT_CODE = 2;
-
 
 
     //PERFIL
@@ -138,11 +138,7 @@ public class Util {
         public static boolean verifyConnection(Context context){
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo netInfo = cm.getActiveNetworkInfo();
-            if (netInfo != null && netInfo.isConnected()) {
-                return true;
-            } else {
-                return false;
-            }
+            return (netInfo != null && netInfo.isConnected());
         }
 
     //Verify BroadCast Wi-Fi
@@ -166,7 +162,7 @@ public class Util {
 
                 for(int i = 0; i < wifiList.size(); i++){
                     Util.log("Buscando rede senac");
-                    if( wifiList.get(i).SSID.equalsIgnoreCase("SENAC-RS EDUCACIONAL")){
+                    if( wifiList.get(i).SSID.equalsIgnoreCase(REDE_SENAC)){
                         Toast.makeText(c, "dados salvos", Toast.LENGTH_SHORT).show();
                         NavigationWiFi n = new NavigationWiFi();
                         n.setCapabilities(wifiList.get(i).capabilities);
@@ -281,7 +277,13 @@ public class Util {
         }
 
     //SharedPreference
-        public static void savePrefKeyValue( Context context, String key, String value ){
+    public static final String PREF_KEY_NICKNAME = "itauamachado.ownpos.extras.Util.PREF_KEY_NICKNAME";
+    public static final String PREF_KEY_ID = "itauamachado.ownpos.extras.Util.PREF_KEY_ID";
+
+    public static final String PREF_KEY_NOTIFICATION_STATUS = "itauamachado.ownpos.extras.Util.PREF_NOTIFICATION_STATUS_KEY_ID";
+    public static final String PREF_KEY_NOTIFICATION_STATUS_OLD = "itauamachado.ownpos.extras.Util.PREF_KEY_NOTIFICATION_STATUS_OLD";
+
+    public static void savePrefKeyValue( Context context, String key, String value ){
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor e = sp.edit();
             e.putString( key, value );
@@ -315,5 +317,7 @@ public class Util {
         public static void log(String msg){
             Log.i("LOG", msg);
         }
+
+
 
 }
