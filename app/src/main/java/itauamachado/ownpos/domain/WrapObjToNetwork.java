@@ -67,6 +67,7 @@ public class WrapObjToNetwork {
         this.gcm = token;
     }
 
+
     public String getGcm() {
         return gcm;
     }

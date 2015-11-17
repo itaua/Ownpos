@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -28,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import itauamachado.ownpos.MapaActivity;
@@ -82,10 +84,9 @@ public class BReceiver_Context extends BroadcastReceiver implements  Transaction
 						if (objAcervoList.size() > 0) {
 							for (int j = 0; j < objAcervoList.size(); j++) {
 								callVolleyRequest(ACERVO, String.valueOf(objAcervoList.get(j).get_senac()));
-								new SQLiteConn(mContext).setNotification(ACERVO);
-
 							}
 						}
+						new SQLiteConn(mContext).setNotification(ACERVO);
 					}
 				}
 
@@ -104,8 +105,6 @@ public class BReceiver_Context extends BroadcastReceiver implements  Transaction
 	}
 
 	public void hasNotification(){
-
-
 		List<String> list = new SQLiteConn(mContext).getNotifications();
 		Util.log("Tamanho da lista: " + list.size());
 
@@ -124,6 +123,7 @@ public class BReceiver_Context extends BroadcastReceiver implements  Transaction
 	}
 
 	public void callVolleyRequest(String tipo, String valor){
+		Util.log("Tipo: "+tipo+" Valor"+valor);
 		NetworkConnection.getInstance(mContext).execute(this, tipo, valor);
 	}
 
@@ -139,9 +139,8 @@ public class BReceiver_Context extends BroadcastReceiver implements  Transaction
 			try {
 				String tipo = "";
 				List<JSONObject> list = new ArrayList<>();
-
 				for (int i = 0; i < jsonArray.length(); i++) {
-					Util.log(jsonArray.getJSONObject(i).toString());
+					//Util.log(jsonArray.getJSONObject(i).toString());
 
 					if(jsonArray.getJSONObject(i).has("notification")){
 						tipo = jsonArray.getJSONObject(i).getString("notification");
@@ -150,7 +149,7 @@ public class BReceiver_Context extends BroadcastReceiver implements  Transaction
 				}
 
 				if(tipo.equalsIgnoreCase(ACERVO)){
-					Util.log("Preparar Notificação Acervo: (Lista: "+list.size()+")");
+					//Util.log("Preparar Notificação Acervo: (Lista: "+list.size()+")");
 					preparaNotificationAcervo(list);
 				}else if(tipo.equalsIgnoreCase(AULA)){
 					preparaNotificationAula(list);
@@ -169,37 +168,76 @@ public class BReceiver_Context extends BroadcastReceiver implements  Transaction
 	public void preparaNotificationAcervo(List<JSONObject> dados){
 		Bundle bundle = new Bundle();
 		Intent intent = new Intent(mContext, MapaActivity.class);
-
-		Util.log("tamanho da lista do acervo" + dados.size());
-
-		String titulo = "";
-		String mensagem = "";
-		List<objAcervo> acervoList = new ArrayList<>();
+		ContentValues contentValues = new ContentValues();
+		List<ContentValues> acervoList = new ArrayList<>();
 		for (int i = 0; i< dados.size(); i++){
-
-			Util.log("Registro "+i+" = "+dados.get(i).toString());
+			//Util.log("Registro "+i+" = "+dados.get(i).toString());
 			for(int j = 0; j < dados.get(i).length(); j++){
-				if(!(dados.get(i).has("notification"))){
+				if(dados.get(i).has("notification")){
+					try{
+						//Util.log("Registro "+i+" = "+dados.get(i).toString());
+						if(!(contentValues.containsKey(dados.get(i).getString("_senac")))){
+							contentValues.put( "acervo", dados.get(i).getString("_senac"));
+						}
 
+					}catch (Exception e){
+						e.printStackTrace();
+					}
 
+				}else{
+					try {
+						contentValues.put( "exemplar", dados.get(i).getString("exemplar"));
+						contentValues.put( "d"+dados.get(i).getString("exemplar"), dados.get(i).getString("disponib"));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
-
+			acervoList.add(contentValues);
+			contentValues = new ContentValues();
 		}
-		bundle.putString("title", titulo);
-		bundle.putString("mensagem", mensagem);
-		bundle.putString(Util.METHOD, Util.NAVEGACAO);
-		bundle.putString("pontoB", "136");
 
+		// [acervo=6456]
+		// [9281380 =Consulta local , acervo=29838]
+		String titulo = "Disponibilidade de acervo";
+		String mensagem= "";
+		String acervo;
+		if(acervoList.size()!= 0){
+			for (ContentValues c: acervoList) {
+				//Util.log(c.toString());
+				if(c.containsKey("exemplar")){
+					String key = c.getAsString("exemplar");
+					if(c.getAsString("d"+key).equalsIgnoreCase("Dispon\u00edvel\u00a0")){
+						mensagem = "Existem livros disponíveis na biblioteca.";
+						break;
+					}else
+					if(c.getAsString("d"+key).equalsIgnoreCase("Consulta local\u00a0")){
+						mensagem = "Existem livros para consulta local";
+					}else{
+						mensagem = "";
+					}
+				}
+			}
+		}
 
-		TaskStackBuilder stack = TaskStackBuilder.create(mContext);
-		stack.addParentStack(MapaActivity.class);
-		intent.putExtras(bundle);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-		stack.addNextIntent(intent);
+		if(mensagem.trim().length()!=0){
+			bundle.putString("title", titulo);
+			bundle.putString("mensagem", mensagem);
+			bundle.putString(Util.METHOD, Util.NAVEGACAO);
+			bundle.putInt("pontoB", 136);
 
-		PendingIntent pi = stack.getPendingIntent( 0, PendingIntent.FLAG_UPDATE_CURRENT );
-		setNotificationApp(bundle, pi);
+			TaskStackBuilder stack = TaskStackBuilder.create(mContext);
+			stack.addParentStack(MapaActivity.class);
+			intent.putExtras(bundle);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			stack.addNextIntent(intent);
+
+			PendingIntent pi = stack.getPendingIntent( 0, PendingIntent.FLAG_UPDATE_CURRENT );
+			setNotificationApp(bundle, pi);
+		}else{
+			Util.log("Sem disponibilidade de acervo");
+		}
+
 	}
 
 	public void preparaNotificationAula(List<JSONObject> dados){
@@ -255,7 +293,7 @@ public class BReceiver_Context extends BroadcastReceiver implements  Transaction
 
 		// BIG CONTENT
 			NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
-			bigText.bigText("mensagem : " + data.getString("mensagem"));
+			bigText.bigText(data.getString("mensagem"));
 			builder.setStyle(bigText);
 
 		//varias notificações ao mesmo tempo

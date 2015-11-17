@@ -95,7 +95,8 @@ public class NetworkConnection {
             url = Util.URL_ACERVO_DISPONIVEL;
             params.put("_senac", valor);
             params.put("notification", BReceiver_Context.ACERVO);
-
+            Util.log("buscando: " + url);
+            Util.log("Acervo: "+valor);
 
         }else
         if(tag.equalsIgnoreCase(BReceiver_Context.AULA)){
@@ -123,7 +124,7 @@ public class NetworkConnection {
                         JSONObject jsonObject = new JSONObject(params);
                         response.put(jsonObject);
 
-                        Util.log("onResponse(): " + response);
+                        //Util.log("onResponse(): " + response);
                         transaction.doAfter(response);
                     }
                 },
